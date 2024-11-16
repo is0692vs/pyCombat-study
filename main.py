@@ -4,8 +4,12 @@ import numpy as np
 from dqn_agent import DQNAgent
 import pygame
 import time
+from datetime import datetime
+import torch
+import os
 from game import Character  # Characterクラスをインポート
 from game import GROUND_Y  # GROUND_Yもインポート
+from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
 
 # pygameの初期化
 pygame.init()
@@ -31,45 +35,59 @@ action_size = env.action_space.n
 agent = DQNAgent(state_size, action_size)
 
 # 学習ループ
-for episode in range(1000):
-    state, _ = env.reset()
-    done = False
-    total_reward = 0
-    step_count = 0
-    while not done:
-        # ランダムな行動を選択
-        if np.random.rand() < agent.epsilon:
-            player_action = env.action_space.sample()
-            enemy_action = env.action_space.sample()
-        else:
-            player_action = agent.act(state)
-            enemy_action = agent.act(state)  # 敵の行動も決定
+for episode in range(300):
+    start_time = time.time()  # エピソードの開始時間を記録
+    total_player_reward = 0
+    total_enemy_reward = 0
+    for battle in range(BATTLES_PER_EPISODE):
+        state, _ = env.reset()
+        done = False
+        step_count = 0
+        while not done:
+            # ランダムな行動を選択
+            if np.random.rand() < agent.epsilon:
+                player_action = env.action_space.sample()
+                enemy_action = env.action_space.sample()
+            else:
+                player_action = agent.act(state, is_player=True)
+                enemy_action = agent.act(state, is_player=False)  # 敵の行動も決定
 
-        # ジャンプを封じる
-        if player_action == 2:
-            player_action = 0
-        if enemy_action == 2:
-            enemy_action = 0
+            action = (player_action, enemy_action)  # タプルにする
+            next_state, reward, terminated, truncated, _ = env.step(action)
+            done = terminated or truncated
+            agent.remember(state, action, reward, next_state, done)
+            agent.learn(is_player=True)  # プレイヤーの学習
+            agent.learn(is_player=False)  # 敵の学習
+            state = next_state
+            total_player_reward += reward[0]  # プレイヤーの報酬を合計する
+            total_enemy_reward += reward[1]  # 敵の報酬を合計する
+            step_count += 1
 
-        action = (player_action, enemy_action)  # タプルにする
-        next_state, reward, terminated, truncated, _ = env.step(action)
-        done = terminated or truncated
-        agent.remember(state, action, reward, next_state, done)
-        agent.learn()
-        state = next_state
-        total_reward += reward
-        step_count += 1
+            # ターゲットネットワークを定期的に更新
+            if episode % agent.update_target_every == 0:
+                agent.update_target_network()
 
-        # ターゲットネットワークを定期的に更新
-        if episode % agent.update_target_every == 0:
-            agent.update_target_network()
+            # ゲーム画面を描画
+            env.render()
 
-        # ゲーム画面を描画
-        env.render()
+            # 報酬が発生した時にログを記録
+            if reward != 0:
+                # print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
+                pass
 
-        # エージェントの行動をログに記録
-        print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}")
+    # 探索率を減少させる
+    agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
 
-    print(f"Episode {episode+1}: Total Reward: {total_reward}")
+    # エピソードの終了時間を計算して表示
+    elapsed_time = time.time() - start_time
+    print(f"Episode {episode+1}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {step_count/1000:.1f}K frames")
+
+# 学習が終了した後にモデルを保存
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+player_model_path = os.path.join('player-agent', f'player_q_network_{timestamp}.pth')
+enemy_model_path = os.path.join('enemy-agent', f'enemy_q_network_{timestamp}.pth')
+
+torch.save(agent.player_q_network.state_dict(), player_model_path)
+torch.save(agent.enemy_q_network.state_dict(), enemy_model_path)
 
 env.close()

@@ -8,7 +8,7 @@ GROUND_Y = WINDOW_HEIGHT+60   # 地面の高さ
 
 # キャラクタークラス
 class Character:
-    def __init__(self, name, x, y, moveset_file):
+    def __init__(self, name, x, y, moveset_file, can_jump=True):
         self.name = name
         self.hp = 100
         self.down_counter = 0
@@ -17,7 +17,7 @@ class Character:
         self.is_down = False
         self.down_time = 0
         self.speed = 10  # 移動速度
-        self.jump_speed = 20  # ジャンプ速度
+        self.jump_speed = 15
         self.gravity = 1  # 重力の強さ
         self.vertical_velocity = 0  # 垂直方向の速度
         self.is_jumping = False  # ジャンプ中かどうか
@@ -26,6 +26,7 @@ class Character:
         self.attack_range_rect = None  # 攻撃範囲表示用
         self.can_attack = True  # 攻撃可能かどうかのフラグ
         self.enemy = None  # 敵キャラクターの参照を保持
+        self.can_jump = can_jump  # ジャンプ許可フラグ
 
     def load_moves(self, moveset_file):
         moves = {}
@@ -87,9 +88,9 @@ class Character:
         self.position.x = max(0, min(self.position.x, WINDOW_WIDTH - self.position.width))
 
     def jump(self):
-        if not self.is_jumping:  # ジャンプ中でない場合のみジャンプ
+        if self.can_jump and not self.is_jumping:  # ジャンプ許可フラグとジャンプ中でない場合のみジャンプ
             self.vertical_velocity = -self.jump_speed
-            self.is_jumping = True
+            self.is_jumping = True  
 
     def apply_gravity(self, opponent):
         if self.is_jumping:
