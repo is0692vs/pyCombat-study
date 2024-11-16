@@ -37,7 +37,7 @@ action_size = env.action_space.n
 agent = DQNAgent(state_size, action_size)
 
 # 学習ループ
-for episode in range(300):
+for episode in range(EPISODES):
     start_time = time.time()  # エピソードの開始時間を記録
     total_player_reward = 0
     total_enemy_reward = 0

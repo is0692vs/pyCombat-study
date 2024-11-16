@@ -35,7 +35,13 @@ class Character:
             for row in reader:
                 moves[row['command']] = {
                     'damage': int(row['damage']),
-                    'range': int(row.get('range', 0))  # 'range'列が存在しない場合はデフォルト値0を設定
+                    'x1_offset': int(row['x1_offset']),
+                    'y1_offset': int(row['y1_offset']),
+                    'x2_offset': int(row['x2_offset']),
+                    'y2_offset': int(row['y2_offset']),
+                    'down_counter_add': int(row['down_counter_add']),
+                    'duration': int(row['duration']),
+                    'range': int(row['range'])
                 }
         return moves
 
@@ -118,32 +124,40 @@ class Character:
     def attack(self, move_name, enemy):
         if self.can_attack and move_name in self.moves:
             move = self.moves[move_name]
-            attack_range = move['range']
             damage = move['damage']
-    
-            if move_name == 'uppercut':  # 前上方向への攻撃の場合
-                if self.direction == 'right':
-                    attack_rect = pygame.Rect(self.position.right, self.position.top - attack_range, attack_range, attack_range)
-                else:
-                    attack_rect = pygame.Rect(self.position.left - attack_range, self.position.top - attack_range, attack_range, attack_range)
-            elif self.direction == 'right':
-                attack_rect = pygame.Rect(self.position.right, self.position.top, attack_range, self.position.height)
+            x1_offset = move['x1_offset']
+            y1_offset = move['y1_offset']
+            x2_offset = move['x2_offset']
+            y2_offset = move['y2_offset']
+
+            if self.direction == 'right':
+                attack_rect = pygame.Rect(
+                    self.position.right + x1_offset,  # 攻撃範囲の左下のx座標
+                    self.position.top + y1_offset,    # 攻撃範囲の左下のy座標
+                    x2_offset - x1_offset,           # 攻撃範囲の幅
+                    y2_offset - y1_offset            # 攻撃範囲の高さ
+                )
             else:
-                attack_rect = pygame.Rect(self.position.left - attack_range, self.position.top, attack_range, self.position.height)
-    
+                attack_rect = pygame.Rect(
+                    self.position.left - x2_offset,  # 攻撃範囲の左下のx座標
+                    self.position.top + y1_offset,   # 攻撃範囲の左下のy座標
+                    x2_offset - x1_offset,           # 攻撃範囲の幅
+                    y2_offset - y1_offset            # 攻撃範囲の高さ
+                )
+
             if attack_rect.colliderect(enemy.position):
                 enemy.hp -= damage
                 if enemy.hp <= 0:
                     enemy.hp = 0
                     enemy.is_down = True
-                    enemy.down_counter += 1
-    
-                self.attack_timer = 10  # 攻撃範囲の表示時間
+                    enemy.down_counter += move['down_counter_add']
+
+                self.attack_timer = move['duration']  # 攻撃範囲の表示時間
                 self.attack_range_rect = attack_rect
                 self.can_attack = False  # 攻撃後は一時的に攻撃不可
                 return True  # 攻撃が当たった場合
             else:
-                self.attack_timer = 10  # 攻撃範囲の表示時間
+                self.attack_timer = move['duration']  # 攻撃範囲の表示時間
                 self.attack_range_rect = attack_rect
                 self.can_attack = False  # 攻撃後は一時的に攻撃不可
                 return False  # 攻撃が外れた場合

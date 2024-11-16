@@ -6,15 +6,16 @@ import pygame
 
 from fighting_game_env import FightingGameEnv
 from game import Character, WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y
+from config import CAN_JUMP  # ジャンプ許可の設定をインポート
 
 class GymFightingGameEnv(gym.Env):
     def __init__(self):
         super(GymFightingGameEnv, self).__init__()
-        player = Character('Player', 100, GROUND_Y, 'moves.csv', can_jump=True)
-        enemy = Character('Enemy', 500, GROUND_Y, 'moves.csv', can_jump=True)
+        player = Character('Player', 100, GROUND_Y, 'moves.csv', can_jump=CAN_JUMP)
+        enemy = Character('Enemy', 500, GROUND_Y, 'moves.csv', can_jump=CAN_JUMP)
         enemy.direction = 'left'
         self.env = FightingGameEnv(player, enemy)
-        self.action_space = spaces.Discrete(6)  # 何もしない、左移動、右移動、ジャンプ、パンチ、キック
+        self.action_space = spaces.Discrete(7)  # 何もしない、左移動、右移動、ジャンプ、パンチ、キック、上攻撃
         self.observation_space = spaces.Box(low=0, high=WINDOW_WIDTH, shape=(8,), dtype=np.float32)  # 8次元状態
 
     def reset(self, seed=None, options=None):
