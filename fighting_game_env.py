@@ -2,17 +2,22 @@
 import pygame
 import random
 import numpy as np
-from game import GROUND_Y
+from game import GROUND_Y, WINDOW_WIDTH
 from config import (
     PLAYER_REWARD_HIT, PLAYER_PENALTY_MISS, PLAYER_REWARD_KILL, PLAYER_REWARD_DISTANCE_CLOSE, PLAYER_PENALTY_DISTANCE_FAR, PLAYER_PENALTY_ON_TOP, PLAYER_PENALTY_HIT,
     ENEMY_REWARD_HIT, ENEMY_PENALTY_MISS, ENEMY_REWARD_KILL, ENEMY_REWARD_DISTANCE_CLOSE, ENEMY_PENALTY_DISTANCE_FAR, ENEMY_PENALTY_ON_TOP, ENEMY_PENALTY_HIT,
     FRAME_RATE,  # フレームレートをインポート
-    PLAYER_PENALTY_LOSE, ENEMY_PENALTY_LOSE  # 負けた時のペナルティをインポート
+    PLAYER_PENALTY_LOSE, ENEMY_PENALTY_LOSE,  # 負けた時のペナルティをインポート
+    EDGE_PENALTY, NO_PENALTY_AREA_WIDTH  # ペナルティの設定をインポート
 )
 
 # ウィンドウのサイズを設定
 WINDOW_WIDTH = 800  # 幅を指定
 WINDOW_HEIGHT = 600  # 高さを指定
+
+# ペナルティを受けないエリアの開始位置と終了位置を計算
+NO_PENALTY_AREA_START = (WINDOW_WIDTH // 2) - (NO_PENALTY_AREA_WIDTH // 2)
+NO_PENALTY_AREA_END = (WINDOW_WIDTH // 2) + (NO_PENALTY_AREA_WIDTH // 2)
 
 class FightingGameEnv:
     def __init__(self, player, enemy):
@@ -143,6 +148,17 @@ class FightingGameEnv:
             player_reward += PLAYER_PENALTY_ON_TOP
         if self.enemy.position.colliderect(self.player.position) and self.enemy.position.y + self.enemy.position.height <= self.player.position.y:
             enemy_reward += ENEMY_PENALTY_ON_TOP
+
+        # 画面端に行くにつれてマイナスの報酬を与える
+        if self.player.position.x < NO_PENALTY_AREA_START:
+            player_reward += ((NO_PENALTY_AREA_START - self.player.position.x) / NO_PENALTY_AREA_START) * EDGE_PENALTY
+        elif self.player.position.x > NO_PENALTY_AREA_END:
+            player_reward += ((self.player.position.x - NO_PENALTY_AREA_END) / (WINDOW_WIDTH - NO_PENALTY_AREA_END)) * EDGE_PENALTY
+
+        if self.enemy.position.x < NO_PENALTY_AREA_START:
+            enemy_reward += ((NO_PENALTY_AREA_START - self.enemy.position.x) / NO_PENALTY_AREA_START) * EDGE_PENALTY
+        elif self.enemy.position.x > NO_PENALTY_AREA_END:
+            enemy_reward += ((self.enemy.position.x - NO_PENALTY_AREA_END) / (WINDOW_WIDTH - NO_PENALTY_AREA_END)) * EDGE_PENALTY
 
         total_reward = (player_reward, enemy_reward)
         return self.get_state(), total_reward, done
