@@ -10,6 +10,8 @@ import os
 from game import Character  # Characterクラスをインポート
 from game import GROUND_Y  # GROUND_Yもインポート
 from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
+import csv
+from config import *  # configの全ての設定をインポート
 
 # pygameの初期化
 pygame.init()
@@ -64,7 +66,7 @@ for episode in range(300):
             step_count += 1
 
             # ターゲットネットワークを定期的に更新
-            if episode % agent.update_target_every == 0:
+            if step_count % agent.update_target_every == 0:
                 agent.update_target_network()
 
             # ゲーム画面を描画
@@ -84,10 +86,19 @@ for episode in range(300):
 
 # 学習が終了した後にモデルを保存
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-player_model_path = os.path.join('player-agent', f'player_q_network_{timestamp}.pth')
-enemy_model_path = os.path.join('enemy-agent', f'enemy_q_network_{timestamp}.pth')
+player_model_path = os.path.join('agent-status', f'player_q_network_{timestamp}.pth')
+enemy_model_path = os.path.join('agent-status', f'enemy_q_network_{timestamp}.pth')
+config_path = os.path.join('agent-status', f'config_{timestamp}.csv')
 
 torch.save(agent.player_q_network.state_dict(), player_model_path)
 torch.save(agent.enemy_q_network.state_dict(), enemy_model_path)
+
+# config設定をCSV形式で保存
+config_data = {key: value for key, value in globals().items() if key.isupper()}
+
+with open(config_path, 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    for key, value in config_data.items():
+        writer.writerow([key, value])
 
 env.close()

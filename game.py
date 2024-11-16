@@ -121,7 +121,12 @@ class Character:
             attack_range = move['range']
             damage = move['damage']
     
-            if self.direction == 'right':
+            if move_name == 'uppercut':  # 前上方向への攻撃の場合
+                if self.direction == 'right':
+                    attack_rect = pygame.Rect(self.position.right, self.position.top - attack_range, attack_range, attack_range)
+                else:
+                    attack_rect = pygame.Rect(self.position.left - attack_range, self.position.top - attack_range, attack_range, attack_range)
+            elif self.direction == 'right':
                 attack_rect = pygame.Rect(self.position.right, self.position.top, attack_range, self.position.height)
             else:
                 attack_rect = pygame.Rect(self.position.left - attack_range, self.position.top, attack_range, self.position.height)

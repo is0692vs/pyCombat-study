@@ -39,9 +39,12 @@ def load_model(agent, player_model_path, enemy_model_path):
     agent.update_target_network()
 
 # 学習済みモデルのロード
-player_model_path = 'player-agent/player_q_network_YYYYMMDD_HHMMSS.pth'  # 実際のファイル名に置き換えてください
-enemy_model_path = 'enemy-agent/enemy_q_network_YYYYMMDD_HHMMSS.pth'  # 実際のファイル名に置き換えてください
+player_model_path = '/Users/hirokimukai/pyFighting/player-agent/player_q_network_20241116_134239.pth'  # 実際のファイル名に置き換えてください
+enemy_model_path = '/Users/hirokimukai/pyFighting/enemy-agent/enemy_q_network_20241116_134239.pth'  # 実際のファイル名に置き換えてください
 load_model(agent, player_model_path, enemy_model_path)
+
+# 探索率を低く設定
+agent.epsilon = 0.01
 
 # プレイループ
 state, _ = env.reset()
@@ -67,6 +70,6 @@ while not done:
 
     # 報酬が発生した時にログを記録
     if player_reward != 0 or enemy_reward != 0:
-        print(f"Step: {step_count}, Action: {action}, Player Reward: {player_reward}, Enemy Reward: {enemy_reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
-
+        # print(f"Step: {step_count}, Action: {action}, Player Reward: {player_reward}, Enemy Reward: {enemy_reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
+        pass
 env.close()

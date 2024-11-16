@@ -6,7 +6,8 @@ from game import GROUND_Y
 from config import (
     PLAYER_REWARD_HIT, PLAYER_PENALTY_MISS, PLAYER_REWARD_KILL, PLAYER_REWARD_DISTANCE_CLOSE, PLAYER_PENALTY_DISTANCE_FAR, PLAYER_PENALTY_ON_TOP, PLAYER_PENALTY_HIT,
     ENEMY_REWARD_HIT, ENEMY_PENALTY_MISS, ENEMY_REWARD_KILL, ENEMY_REWARD_DISTANCE_CLOSE, ENEMY_PENALTY_DISTANCE_FAR, ENEMY_PENALTY_ON_TOP, ENEMY_PENALTY_HIT,
-    FRAME_RATE  # フレームレートをインポート
+    FRAME_RATE,  # フレームレートをインポート
+    PLAYER_PENALTY_LOSE, ENEMY_PENALTY_LOSE  # 負けた時のペナルティをインポート
 )
 
 # ウィンドウのサイズを設定
@@ -72,6 +73,12 @@ class FightingGameEnv:
                 enemy_reward += ENEMY_PENALTY_HIT  # 攻撃を受けた場合のペナルティ
             else:
                 player_reward += PLAYER_PENALTY_MISS  # 攻撃が外れた場合のペナルティ
+        elif player_action == 6:
+            if self.player.attack('uppercut', self.enemy):  # 前上方向への攻撃
+                player_reward += PLAYER_REWARD_HIT  # 攻撃が当たった場合の報酬
+                enemy_reward += ENEMY_PENALTY_HIT  # 攻撃を受けた場合のペナルティ
+            else:
+                player_reward += PLAYER_PENALTY_MISS  # 攻撃が外れた場合のペナルティ
 
         # 敵の行動
         if enemy_action == 0:
@@ -92,6 +99,14 @@ class FightingGameEnv:
             if self.enemy.attack('kick', self.player):
                 enemy_reward += ENEMY_REWARD_HIT  # 攻撃が当たった場合の報酬
                 player_reward += PLAYER_PENALTY_HIT  # 攻撃を受けた場合のペナルティ
+            else:
+                enemy_reward += ENEMY_PENALTY_MISS  # 攻撃が外れた場合のペナルティ
+        elif enemy_action == 6:
+            if self.enemy.attack('uppercut', self.player):  # 前上方向への攻撃
+                enemy_reward += ENEMY_REWARD_HIT  # 攻撃が当たった場合の報酬
+                player_reward += PLAYER_PENALTY_HIT  # 攻撃を受けた場合のペナルティ
+            else:
+                enemy_reward += ENEMY_PENALTY_MISS  # 攻撃が外れた場合のペナルティ
 
         self.player.apply_gravity(self.enemy)
         self.enemy.apply_gravity(self.player)
@@ -102,8 +117,10 @@ class FightingGameEnv:
         done = self.player.hp <= 0 or self.enemy.hp <= 0
         if self.enemy.hp <= 0:
             player_reward += PLAYER_REWARD_KILL  # 敵を倒した場合の報酬
+            enemy_reward += ENEMY_PENALTY_LOSE  # 敵が負けた場合のペナルティ
         if self.player.hp <= 0:
             enemy_reward += ENEMY_REWARD_KILL  # プレイヤーを倒した場合の報酬
+            player_reward += PLAYER_PENALTY_LOSE  # プレイヤーが負けた場合のペナルティ
 
         # 距離に基づいて報酬を調整
         current_distance = abs(self.player.position.x - self.enemy.position.x)
@@ -141,7 +158,7 @@ class FightingGameEnv:
             pygame.draw.rect(self.screen, (255, 255, 0), self.enemy.attack_range_rect, 2)  # 敵の攻撃範囲
         self.player.draw_eyes(self.screen)
         self.enemy.draw_eyes(self.screen)
-        self.player.draw_stats(self.screen, 10, 10)  # 位置���指定してステータスを描画
+        self.player.draw_stats(self.screen, 10, 10)  # 位置を指定してステータスを描画
         self.enemy.draw_stats(self.screen, WINDOW_WIDTH - 200, 10)  # 位置を指定してステータスを描画
         pygame.display.flip()
         self.clock.tick(FRAME_RATE)  # フレームレート
