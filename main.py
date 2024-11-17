@@ -41,11 +41,12 @@ for episode in range(EPISODES):
     start_time = time.time()  # エピソードの開始時間を記録
     total_player_reward = 0
     total_enemy_reward = 0
+    total_steps = 0  # 合計ステップ数を初期化
     for battle in range(BATTLES_PER_EPISODE):
         state, _ = env.reset()
         done = False
         step_count = 0
-        while not done:
+        while not done and step_count < MAX_STEPS:
             # ランダムな行動を選択
             if np.random.rand() < agent.epsilon:
                 player_action = env.action_space.sample()
@@ -64,13 +65,15 @@ for episode in range(EPISODES):
             total_player_reward += reward[0]  # プレイヤーの報酬を合計する
             total_enemy_reward += reward[1]  # 敵の報酬を合計する
             step_count += 1
+            total_steps += 1  # ステップ数をカウント
 
             # ターゲットネットワークを定期的に更新
             if step_count % agent.update_target_every == 0:
                 agent.update_target_network()
 
             # ゲーム画面を描画
-            env.render()
+            if RENDER:
+                env.render()
 
             # 報酬が発生した時にログを記録
             if reward != 0:
@@ -82,7 +85,7 @@ for episode in range(EPISODES):
 
     # エピソードの終了時間を計算して表示
     elapsed_time = time.time() - start_time
-    print(f"Episode {episode+1}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {step_count/1000:.1f}K frames")
+    print(f"Episode {episode+1}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
 
 # 学習が終了した後にモデルを保存
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

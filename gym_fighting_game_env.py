@@ -5,8 +5,8 @@ import numpy as np
 import pygame
 
 from fighting_game_env import FightingGameEnv
-from game import Character, WINDOW_WIDTH, WINDOW_HEIGHT, GROUND_Y
-from config import CAN_JUMP  # ジャンプ許可の設定をインポート
+from game import Character, GROUND_Y
+from config import CAN_JUMP, WINDOW_WIDTH, WINDOW_HEIGHT  # ジャンプ許可とウィンドウの大きさの設定をインポート
 
 class GymFightingGameEnv(gym.Env):
     def __init__(self):

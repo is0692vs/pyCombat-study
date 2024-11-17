@@ -1,10 +1,10 @@
 # game.py
 import pygame
 import csv
+from config import WINDOW_WIDTH, WINDOW_HEIGHT  # ウィンドウの大きさの設定をインポート
 
 # ウィンドウと地面の設定
-WINDOW_WIDTH, WINDOW_HEIGHT = 640, 480
-GROUND_Y = WINDOW_HEIGHT+60   # 地面の高さ
+GROUND_Y = WINDOW_HEIGHT - 60   # 地面の高さ
 
 # キャラクタークラス
 class Character:

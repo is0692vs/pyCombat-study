@@ -39,8 +39,8 @@ def load_model(agent, player_model_path, enemy_model_path):
     agent.update_target_network()
 
 # 学習済みモデルのロード
-player_model_path = '/Users/hirokimukai/pyFighting/player-agent/player_q_network_20241116_134239.pth'  # 実際のファイル名に置き換えてください
-enemy_model_path = '/Users/hirokimukai/pyFighting/enemy-agent/enemy_q_network_20241116_134239.pth'  # 実際のファイル名に置き換えてください
+player_model_path = 'player-agent/player_q_network_20241116_134239.pth'  # 実際のファイルパス
+enemy_model_path = 'enemy-agent/enemy_q_network_20241116_134239.pth'  # 実際のファイルパス
 load_model(agent, player_model_path, enemy_model_path)
 
 # 探索率を低く設定

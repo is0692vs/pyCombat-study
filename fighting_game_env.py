@@ -8,12 +8,11 @@ from config import (
     ENEMY_REWARD_HIT, ENEMY_PENALTY_MISS, ENEMY_REWARD_KILL, ENEMY_REWARD_DISTANCE_CLOSE, ENEMY_PENALTY_DISTANCE_FAR, ENEMY_PENALTY_ON_TOP, ENEMY_PENALTY_HIT,
     FRAME_RATE,  # フレームレートをインポート
     PLAYER_PENALTY_LOSE, ENEMY_PENALTY_LOSE,  # 負けた時のペナルティをインポート
-    EDGE_PENALTY, NO_PENALTY_AREA_WIDTH  # ペナルティの設定をインポート
+    EDGE_PENALTY, NO_PENALTY_AREA_WIDTH,  # ペナルティの設定をインポート
+    WINDOW_WIDTH, WINDOW_HEIGHT,  # ウィンドウの大きさの設定をインポート
+    MAX_STEPS, # 最大ステップ数をインポート
+    HEALTH_DIFFERENCE_REWARD_RATE # 体力差に基づく報酬の倍率をインポート
 )
-
-# ウィンドウのサイズを設定
-WINDOW_WIDTH = 800  # 幅を指定
-WINDOW_HEIGHT = 600  # 高さを指定
 
 # ペナルティを受けないエリアの開始位置と終了位置を計算
 NO_PENALTY_AREA_START = (WINDOW_WIDTH // 2) - (NO_PENALTY_AREA_WIDTH // 2)
@@ -28,6 +27,7 @@ class FightingGameEnv:
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
         self.prev_distance = abs(self.player.position.x - self.enemy.position.x)  # 初期距離を設定
+        self.step_count = 0  # ステップ数を初期化
 
     def reset(self):
         # プレイヤーと敵の初期化
@@ -39,7 +39,8 @@ class FightingGameEnv:
         self.enemy.is_down = False
         self.player.down_counter = 0
         self.enemy.down_counter = 0
-        self.prev_distance = abs(self.player.position.x - self.enemy.position.x)  # 初期距離を設定
+        self.prev_distance = abs(self.player.position.x - self.enemy.position.x)  # 初期��離を設定
+        self.step_count = 0  # ステップ数をリセット
         return self.get_state()
 
     def get_state(self):
@@ -56,6 +57,7 @@ class FightingGameEnv:
         player_action, enemy_action = action
         player_reward = 0
         enemy_reward = 0
+        self.step_count += 1  # ステップ数をカウント
 
         # プレイヤーの行動
         if player_action == 0:
@@ -120,6 +122,11 @@ class FightingGameEnv:
         self.enemy.update()
 
         done = self.player.hp <= 0 or self.enemy.hp <= 0
+        if done or self.step_count >= MAX_STEPS:
+            # 試合終了時点での体力差*倍率を報酬に追加
+            health_difference_reward = (self.player.hp - self.enemy.hp) * HEALTH_DIFFERENCE_REWARD_RATE
+            player_reward += health_difference_reward 
+            enemy_reward -= health_difference_reward
         if self.enemy.hp <= 0:
             player_reward += PLAYER_REWARD_KILL  # 敵を倒した場合の報酬
             enemy_reward += ENEMY_PENALTY_LOSE  # 敵が負けた場合のペナルティ
