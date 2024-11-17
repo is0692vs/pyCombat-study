@@ -66,7 +66,7 @@ while not done:
     step_count += 1
 
     # ゲーム画面を描画
-    env.render()
+    env.render(total_player_reward, total_enemy_reward)
 
     # 報酬が発生した時にログを記録
     if player_reward != 0 or enemy_reward != 0:
