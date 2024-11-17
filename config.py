@@ -12,7 +12,7 @@ RENDER = True
 SAVE_MODEL_AND_CONFIG = False
 
 # 1エピソードでの対戦回数
-BATTLES_PER_EPISODE = 5  
+BATTLES_PER_EPISODE = 20  
 
 #学習ループのエピソード数
 EPISODES = 500  
@@ -69,3 +69,6 @@ EPSILON_DECAY = 0.99  # 探索率の減衰率：１に近いほど急速に探�
 BATCH_SIZE = 64  # バッチサイズ:ミニバッチ学習のサイズ
 UPDATE_TARGET_EVERY = 20  # ターゲットネットワークの更新間隔:何エピソードごとにターゲットネットワークを更新するか
 LEARNING_RATE = 0.0005  # 学習率:ネットワークの重みを更新するステップサイズ
+# 学習率スケジューラの設定
+LR_STEP_SIZE = 100  # 学習率を更新する間隔
+LR_GAMMA = 0.95  # 学習率を減衰させる割合

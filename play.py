@@ -9,10 +9,12 @@ from datetime import datetime
 import os
 from game import Character  # Characterクラスをインポート
 from game import GROUND_Y  # GROUND_Yもインポート
+from config import FRAME_RATE  # フレームレートをインポート
 
 # pygameの初期化
 pygame.init()
 pygame.font.init()
+clock = pygame.time.Clock()  # フレームレート制御用の時計を初期化
 
 # 環境の登録
 gym.register(
@@ -67,7 +69,8 @@ while not done:
     step_count += 1
 
     # ゲーム画面を描画
-    env.render(total_player_reward, total_enemy_reward)
+    env.render()
+    clock.tick(FRAME_RATE)#フレームレート(上限)を制御
 
     # 報酬が発生した時にログを記録
     if player_reward != 0 or enemy_reward != 0:

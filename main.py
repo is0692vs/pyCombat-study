@@ -16,6 +16,7 @@ from config import *  # configの全ての設定をインポート
 # pygameの初期化
 pygame.init()
 pygame.font.init()
+clock = pygame.time.Clock()  # フレームレート制御用の時計を初期化
 
 # 環境の登録
 gym.register(
@@ -81,7 +82,9 @@ try:
                 # ゲーム画面を描画
                 if RENDER:
                     env.render()
-
+                
+                clock.tick(FRAME_RATE)#フレームレート(上限)を制御
+                
                 # 報酬が発生した時にログを記録
                 if reward != 0:
                     # print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")

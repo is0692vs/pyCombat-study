@@ -6,13 +6,14 @@ import torch.nn as nn
 import torch.optim as optim
 from collections import deque
 from config import (
-    MEMORY_SIZE, GAMMA, EPSILON, EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE, UPDATE_TARGET_EVERY, LEARNING_RATE
+    MEMORY_SIZE, GAMMA, EPSILON, EPSILON_MIN, EPSILON_DECAY, BATCH_SIZE, UPDATE_TARGET_EVERY, LEARNING_RATE,
+    LR_STEP_SIZE, LR_GAMMA
 )
 import torch.optim.lr_scheduler as lr_scheduler
 
 class DQNAgent:
     def __init__(self, state_size, action_size):
-        self.state_size = state_size  # 相対位置の次元を追加
+        self.state_size = state_size
         self.action_size = action_size
         self.memory = deque(maxlen=MEMORY_SIZE)
         self.gamma = GAMMA
@@ -28,8 +29,8 @@ class DQNAgent:
         self.update_target_network()
         self.player_optimizer = optim.Adam(self.player_q_network.parameters(), lr=LEARNING_RATE)
         self.enemy_optimizer = optim.Adam(self.enemy_q_network.parameters(), lr=LEARNING_RATE)
-        self.player_scheduler = lr_scheduler.StepLR(self.player_optimizer, step_size=100, gamma=0.9)
-        self.enemy_scheduler = lr_scheduler.StepLR(self.enemy_optimizer, step_size=100, gamma=0.9)
+        self.player_scheduler = lr_scheduler.StepLR(self.player_optimizer, step_size=LR_STEP_SIZE, gamma=LR_GAMMA)
+        self.enemy_scheduler = lr_scheduler.StepLR(self.enemy_optimizer, step_size=LR_STEP_SIZE, gamma=LR_GAMMA)
 
     def _build_model(self):
         model = nn.Sequential(
