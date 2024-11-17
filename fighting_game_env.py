@@ -10,7 +10,8 @@ from config import (
     EDGE_PENALTY, NO_PENALTY_AREA_WIDTH,  # ペナルティの設定をインポート
     WINDOW_WIDTH, WINDOW_HEIGHT,  # ウィンドウの大きさの設定をインポート
     MAX_STEPS, # 最大ステップ数をインポート
-    HEALTH_DIFFERENCE_REWARD_RATE # 体力差に基づく報酬の倍率をインポート
+    HEALTH_DIFFERENCE_REWARD_RATE, # 体力差に基づく報酬の倍率をインポート
+    BATTLES_PER_EPISODE  # 1エピソードでの対戦回数をインポート
 )
 
 # ペナルティを受けないエリアの開始位置と終了位置を計算
@@ -27,6 +28,7 @@ class FightingGameEnv:
         self.clock = pygame.time.Clock()
         self.prev_distance = abs(self.player.position.x - self.enemy.position.x)  # 初期距離を設定
         self.step_count = 0  # ステップ数を初期化
+        self.current_battle = 0  # 現在の試合数を初期化
 
     def reset(self):
         # プレイヤーと敵の初期化
@@ -181,7 +183,18 @@ class FightingGameEnv:
         self.player.draw_eyes(self.screen)
         self.enemy.draw_eyes(self.screen)
         self.player.draw_stats(self.screen, 10, 10)  # 位置を指定してステータスを描画
-        self.enemy.draw_stats(self.screen, WINDOW_WIDTH - 200, 10)  # 位置を指定してステータスを描画
+        self.enemy.draw_stats(self.screen, WINDOW_WIDTH - 120, 10)  # 位置を指定してステータスを描画
+        
+        
+
+        # 試合数の表示
+        pygame.font.init()
+        font = pygame.font.Font(None, 36)
+        battle_text = font.render(f"{self.current_battle}/{BATTLES_PER_EPISODE}", True, (255, 255, 255))
+        text_width, text_height = font.size(f"{self.current_battle}/{BATTLES_PER_EPISODE}")
+        text_rect = battle_text.get_rect(center=(WINDOW_WIDTH // 2, 20))
+        self.screen.blit(battle_text, (WINDOW_WIDTH // 2 - text_width // 2, 20))
+        
         pygame.display.flip()
         self.clock.tick(FRAME_RATE)  # フレームレート
 

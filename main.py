@@ -43,13 +43,13 @@ try:
         total_player_reward = 0
         total_enemy_reward = 0
         total_steps = 0  # 合計ステップ数を初期化
-        battle_count = 0  # 試合数をリセット
 
         # 報酬をリセット
         env.unwrapped.env.player.reward = 0
         env.unwrapped.env.enemy.reward = 0
 
         for battle in range(BATTLES_PER_EPISODE):
+            env.unwrapped.env.current_battle = battle + 1  # 現在の試合数を設定
             state, _ = env.reset()
             done = False
             step_count = 0
@@ -92,7 +92,7 @@ try:
 
         # エピソードの終了時間を計算して表示
         elapsed_time = time.time() - start_time
-        print(f"Episode {episode+1}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
+        print(f"Episode {episode+1}/{EPISODES}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
 
 except KeyboardInterrupt:
     print(f"学習を中断しました。エピソード {episode+1} で中断されました。")

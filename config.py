@@ -12,7 +12,7 @@ RENDER = True
 SAVE_MODEL_AND_CONFIG = False
 
 # 1エピソードでの対戦回数
-BATTLES_PER_EPISODE = 20  
+BATTLES_PER_EPISODE = 5  
 
 #学習ループのエピソード数
 EPISODES = 500  
