@@ -1,4 +1,4 @@
-#gym_fighting_game_env.py
+#gym_fighting_game_env.pyは
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np

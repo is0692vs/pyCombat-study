@@ -1,4 +1,4 @@
-# dqn_agent.py
+# dqn_agent.pyは以下の通りです。
 import random
 import numpy as np
 import torch

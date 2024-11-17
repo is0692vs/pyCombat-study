@@ -1,3 +1,4 @@
+#play.pyを実行すると、学習済みモデルを使ってゲームをプレイすることができます。
 import gymnasium as gym
 import numpy as np
 import torch

@@ -1,4 +1,4 @@
-# #main.py
+#main.pyを実行すると、DQNエージェントが学習を開始します。
 import gymnasium as gym
 import numpy as np
 from dqn_agent import DQNAgent

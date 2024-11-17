@@ -1,4 +1,4 @@
-# game.py
+# game.pyは以下の通りです。
 import pygame
 import csv
 from config import WINDOW_WIDTH, WINDOW_HEIGHT  # ウィンドウの大きさの設定をインポート

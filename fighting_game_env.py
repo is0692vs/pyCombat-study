@@ -1,6 +1,5 @@
-#fighting_game_env.py
+#fighting_game_env.pyは以下の通りです。
 import pygame
-import random
 import numpy as np
 from game import GROUND_Y, WINDOW_WIDTH
 from config import (
