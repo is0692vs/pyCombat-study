@@ -7,7 +7,6 @@ import time
 from datetime import datetime
 import torch
 import os
-from game import Character  # Characterクラスをインポート
 from game import GROUND_Y  # GROUND_Yもインポート
 from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
 import csv
@@ -37,6 +36,9 @@ action_size = env.action_space.n
 # DQNAgentのインスタンスを作成
 agent = DQNAgent(state_size, action_size)
 
+# エピソードごとの結果を保存するリストを初期化
+episode_results = []
+
 try:
     # 学習ループ
     for episode in range(EPISODES):
@@ -51,6 +53,8 @@ try:
 
         for battle in range(BATTLES_PER_EPISODE):
             env.unwrapped.env.current_battle = battle + 1  # 現在の試合数を設定
+            if not RENDER:
+                print("Episode {}/{}: Battle {}/{}".format(episode+1, EPISODES, battle+1, BATTLES_PER_EPISODE))
             state, _ = env.reset()
             done = False
             step_count = 0
@@ -89,7 +93,7 @@ try:
                 if reward != 0:
                     # print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
                     pass
-
+            
         # 探索率を減少させる
         agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
 
@@ -97,11 +101,14 @@ try:
         elapsed_time = time.time() - start_time
         print(f"Episode {episode+1}/{EPISODES}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
 
+        # エピソードごとの結果をリストに追加
+        episode_results.append([episode+1, total_player_reward, total_enemy_reward, elapsed_time, total_steps])
+
 except KeyboardInterrupt:
     print(f"学習を中断しました。エピソード {episode+1} で中断されました。")
 
 finally:
-    if SAVE_MODEL_AND_CONFIG:
+    if SAVE_MODEL_CONFIG_RESULTS:
         # 学習が終了した後にモデルを保存
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         player_model_path = os.path.join('agent-status', f'player_q_network_{timestamp}.pth')
@@ -120,4 +127,12 @@ finally:
             for key, value in config_data.items():
                 writer.writerow([key, value])
 
+
+        # エピソードごとの結果をCSVファイルに保存
+        results_path = os.path.join('agent-status', f'episode_results_{timestamp}.csv')
+        with open(results_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Episode', 'Total Player Reward', 'Total Enemy Reward', 'Elapsed Time', 'Total Steps'])
+            writer.writerows(episode_results)
+            
     env.close()
