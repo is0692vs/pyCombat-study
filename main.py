@@ -54,7 +54,7 @@ try:
         for battle in range(BATTLES_PER_EPISODE):
             env.unwrapped.env.current_battle = battle + 1  # 現在の試合数を設定
             if not RENDER:
-                print("Episode {}/{}: Battle {}/{}".format(episode+1, EPISODES, battle+1, BATTLES_PER_EPISODE))
+                print(f"Episode {episode+1}/{EPISODES}: Battle {battle+1}/{BATTLES_PER_EPISODE}")
             state, _ = env.reset()
             done = False
             step_count = 0
@@ -99,20 +99,20 @@ try:
 
         # エピソードの終了時間を計算して表示
         elapsed_time = time.time() - start_time
-        print(f"Episode {episode+1}/{EPISODES}: Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}, Elapsed Time: {elapsed_time:.2f} seconds, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
+        print(f"Episode {episode+1}/{EPISODES}: Total Player Reward: {total_player_reward:.2f}, Total Enemy Reward: {total_enemy_reward:.2f}, Elapsed Time: {elapsed_time:.2f} sec, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
 
         # エピソードごとの結果をリストに追加
         episode_results.append([episode+1, total_player_reward, total_enemy_reward, elapsed_time, total_steps])
 
 except KeyboardInterrupt:
-    print(f"学習を中断しました。エピソード {episode+1} で中断されました。")
+    print(f"学習をエピソード {episode+1} で中断しました。")
 
 finally:
     if SAVE_MODEL_CONFIG_RESULTS:
         # 学習が終了した後にモデルを保存
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        player_model_path = os.path.join('agent-status', f'player_q_network_{timestamp}.pth')
-        enemy_model_path = os.path.join('agent-status', f'enemy_q_network_{timestamp}.pth')
+        timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M")
+        player_model_path = os.path.join('player-agent', f'player_{timestamp}_Qnet.pth')
+        enemy_model_path = os.path.join('enemy-agent', f'enemy_{timestamp}_Qnet.pth')
         config_path = os.path.join('agent-status', f'config_{timestamp}.csv')
 
         torch.save(agent.player_q_network.state_dict(), player_model_path)
@@ -129,7 +129,7 @@ finally:
 
 
         # エピソードごとの結果をCSVファイルに保存
-        results_path = os.path.join('agent-status', f'episode_results_{timestamp}.csv')
+        results_path = os.path.join('result', f'results_{timestamp}.csv')
         with open(results_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['Episode', 'Total Player Reward', 'Total Enemy Reward', 'Elapsed Time', 'Total Steps'])

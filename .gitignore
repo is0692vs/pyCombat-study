@@ -2,3 +2,6 @@
 /__pycache__
 /agent-status
 /samp.py
+/enemy-agent
+/player-agent
+/result
