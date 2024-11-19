@@ -35,6 +35,21 @@ action_size = env.action_space.n
 # DQNAgentのインスタンスを作成
 agent = DQNAgent(state_size, action_size)
 
+
+# 学習済みモデルのロード関数
+def load_model(agent, player_model_path, enemy_model_path):
+    agent.player_q_network.load_state_dict(torch.load(player_model_path))
+    agent.enemy_q_network.load_state_dict(torch.load(enemy_model_path))
+    agent.update_target_network()
+
+# 学習済みモデルのロード
+player_model_path = 'player-agent/player_2024-11-18-15:04_Qnet.pth'  # 実際のファイルパス
+enemy_model_path = 'enemy-agent/enemy_2024-11-18-15:04_Qnet.pth'  # 実際のファイルパス
+load_model(agent, player_model_path, enemy_model_path)
+
+# DQNAgentのインスタンスを作成
+agent = DQNAgent(state_size, action_size)
+
 # 探索率を低く設定
 agent.epsilon = 0.01
 

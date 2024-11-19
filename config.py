@@ -9,7 +9,7 @@ CHARACTER_HEIGHT = 60
 CHARACTER_DISTANCE = 100  # ウィンドウの中心からの距離
 
 # フレームレートの設定
-FRAME_RATE = 120  # ゲームのフレームレート
+FRAME_RATE = 60  # ゲームのフレームレート
 
 # 画面を描画するかどうかの設定
 RENDER = True
@@ -19,10 +19,10 @@ RENDER = True
 SAVE_MODEL_CONFIG_RESULTS = True
 
 # 1エピソードでの対戦回数
-BATTLES_PER_EPISODE = 15  
+BATTLES_PER_EPISODE = 20  
 
 #学習ループのエピソード数
-EPISODES = 100  
+EPISODES = 200  
 
 # 1試合の最大ステップ数
 MAX_STEPS = 2000
@@ -33,31 +33,31 @@ CAN_JUMP = True
 
 # プレイヤーの報酬の設定
 PLAYER_REWARD_HIT = 20.0  # 攻撃が当たった場合の報酬
-PLAYER_PENALTY_MISS = -1  # 攻撃が外れた場合のペナルティ
-PLAYER_REWARD_KILL = 50  # 敵を倒した場合の報酬
+PLAYER_PENALTY_MISS = -0  # 攻撃が外れた場合のペナルティ
+PLAYER_REWARD_KILL = 100  # 敵を倒した場合の報酬
 PLAYER_PENALTY_LOSE = -0  # プレイヤーが負けた場合のペナルティ
-PLAYER_REWARD_DISTANCE_CLOSE = 0.003  # 敵に近づいた場合の報酬
-PLAYER_PENALTY_DISTANCE_FAR = -0.005  # 敵から離れた場合のペナルティ
-PLAYER_PENALTY_ON_TOP = -0.1  # 相手の上に乗った場合のペナルティ
-PLAYER_PENALTY_HIT = -2  # 攻撃を受けた場合のペナルティ
+PLAYER_REWARD_DISTANCE_CLOSE = 0  # 敵に近づいた場合の報酬
+PLAYER_PENALTY_DISTANCE_FAR = -0  # 敵から離れた場合のペナルティ
+PLAYER_PENALTY_ON_TOP = -0  # 相手の上に乗った場合のペナルティ
+PLAYER_PENALTY_HIT = -1  # 攻撃を受けた場合のペナルティ
 
 # 敵の報酬の設定
 ENEMY_REWARD_HIT = 20.0  # 攻撃が当たった場合の報酬
-ENEMY_PENALTY_MISS = -1  # 攻撃が外れた場合のペナルティ
-ENEMY_REWARD_KILL = 50  # プレイヤーを倒した場合の報酬
+ENEMY_PENALTY_MISS = -0  # 攻撃が外れた場合のペナルティ
+ENEMY_REWARD_KILL = 100  # プレイヤーを倒した場合の報酬
 ENEMY_PENALTY_LOSE = -0  # 敵が負けた場合のペナルティ
-ENEMY_REWARD_DISTANCE_CLOSE = 0.003 # プレイヤーに近づいた場合の報酬
-ENEMY_PENALTY_DISTANCE_FAR = -0.005 # プレイヤーから離れた場合のペナルティ
-ENEMY_PENALTY_ON_TOP = -0.1  # 相手の上に乗った場合のペナルティ
-ENEMY_PENALTY_HIT = -2  # 攻撃を受けた場合のペナルティ
+ENEMY_REWARD_DISTANCE_CLOSE = 0 # プレイヤーに近づいた場合の報酬
+ENEMY_PENALTY_DISTANCE_FAR = -0 # プレイヤーから離れた場合のペナルティ
+ENEMY_PENALTY_ON_TOP = -0  # 相手の上に乗った場合のペナルティ
+ENEMY_PENALTY_HIT = -1  # 攻撃を受けた場合のペナルティ
 
 # 画面端のペナルティの設定
-EDGE_PENALTY = -0.5  # 画面端にいる場合のペナルティの強さ
+EDGE_PENALTY = -0.000001  # 画面端にいる場合のペナルティの強さ
 # ペナルティを受けないエリアの幅の設定
-NO_PENALTY_AREA_WIDTH = 50  # ペナルティを受けないエリアの幅
+NO_PENALTY_AREA_WIDTH = 200  # ペナルティを受けないエリアの幅
 
 #体力差の報酬の設定
-HEALTH_DIFFERENCE_REWARD_RATE = 10.0 # 体力差に基づく報酬の倍率
+HEALTH_DIFFERENCE_REWARD_RATE = 1.0 # 体力差に基づく報酬の倍率
 
 
 
