@@ -4,3 +4,5 @@
 /enemy-agent
 /player-agent
 /result
+/config.py
+/plot.py

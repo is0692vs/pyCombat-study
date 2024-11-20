@@ -6,10 +6,10 @@ CHARACTER_WIDTH = 30
 CHARACTER_HEIGHT = 60
 
 # キャラクタの初期距離の設定
-CHARACTER_DISTANCE = 100  # ウィンドウの中心からの距離
+CHARACTER_DISTANCE = 200  
 
 # フレームレートの設定
-FRAME_RATE = 60  # ゲームのフレームレート
+FRAME_RATE = 40  # ゲームの最大フレームレート
 
 # 画面を描画するかどうかの設定
 RENDER = True
@@ -19,7 +19,7 @@ RENDER = True
 SAVE_MODEL_CONFIG_RESULTS = True
 
 # 1エピソードでの対戦回数
-BATTLES_PER_EPISODE = 20  
+BATTLES_PER_EPISODE = 10  
 
 #学習ループのエピソード数
 EPISODES = 200  
@@ -52,9 +52,9 @@ ENEMY_PENALTY_ON_TOP = -0  # 相手の上に乗った場合のペナルティ
 ENEMY_PENALTY_HIT = -1  # 攻撃を受けた場合のペナルティ
 
 # 画面端のペナルティの設定
-EDGE_PENALTY = -0.000001  # 画面端にいる場合のペナルティの強さ
+EDGE_PENALTY = -0.001  # 画面端にいる場合のペナルティの強さ
 # ペナルティを受けないエリアの幅の設定
-NO_PENALTY_AREA_WIDTH = 200  # ペナルティを受けないエリアの幅
+NO_PENALTY_AREA_WIDTH = 100  # ペナルティを受けないエリアの幅
 
 #体力差の報酬の設定
 HEALTH_DIFFERENCE_REWARD_RATE = 1.0 # 体力差に基づく報酬の倍率
