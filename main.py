@@ -7,7 +7,6 @@ import time
 from datetime import datetime
 import torch
 import os
-from game import GROUND_Y  # GROUND_Yもインポート
 from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
 import csv
 from config import *  # configの全ての設定をインポート
@@ -93,6 +92,16 @@ try:
                 if reward != 0:
                     # print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
                     pass
+
+                # キーボードイベントの処理
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_r:
+                            RENDER = not RENDER
+                            print(f"RENDER is now set to {RENDER}")
+                        elif event.key == pygame.K_s:
+                            SAVE_MODEL_CONFIG_RESULTS = not SAVE_MODEL_CONFIG_RESULTS
+                            print(f"SAVE_MODEL_CONFIG_RESULTS is now set to {SAVE_MODEL_CONFIG_RESULTS}")
             
         # 探索率を減少させる
         agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)

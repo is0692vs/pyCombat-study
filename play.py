@@ -1,15 +1,11 @@
 #play.pyを実行すると、学習済みモデルを使ってゲームをプレイすることができます。
 import gymnasium as gym
-import numpy as np
 import torch
 from dqn_agent import DQNAgent
 import pygame
 import time
-from datetime import datetime
-import os
-from game import Character  # Characterクラスをインポート
-from game import GROUND_Y  # GROUND_Yもインポート
-from config import FRAME_RATE, MAX_STEPS, BATTLES_PER_EPISODE  # 必要な設定をインポート
+from game import GROUND_Y  
+from config import FRAME_RATE, MAX_STEPS, BATTLES_PER_EPISODE  
 
 # pygameの初期化
 pygame.init()
@@ -43,8 +39,8 @@ def load_model(agent, player_model_path, enemy_model_path):
     agent.update_target_network()
 
 # 学習済みモデルのロード
-player_model_path = 'player-agent/player_2024-11-18-15:04_Qnet.pth'  # 実際のファイルパス
-enemy_model_path = 'enemy-agent/enemy_2024-11-18-15:04_Qnet.pth'  # 実際のファイルパス
+player_model_path = 'player-agent/player_2024-11-21-09:20_Qnet.pth'  # 実際のファイルパス
+enemy_model_path = 'enemy-agent/enemy_2024-11-21-09:20_Qnet.pth'  # 実際のファイルパス
 load_model(agent, player_model_path, enemy_model_path)
 
 # DQNAgentのインスタンスを作成
