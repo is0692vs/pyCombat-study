@@ -2,7 +2,7 @@
 import pygame
 import csv
 from config import WINDOW_WIDTH, WINDOW_HEIGHT  # ウィンドウの大きさの設定をインポート
-from config import CHARACTER_HEIGHT, CHARACTER_WIDTH  # キャラクタの幅と高さの設定をインポート
+from config import CHARACTER_HEIGHT, CHARACTER_WIDTH, CHARACTER_HP  # キャラクタの幅と高さとHPの設定をインポート
 # ウィンドウと地面の設定
 GROUND_Y = WINDOW_HEIGHT - CHARACTER_HEIGHT   # 地面の高さ
 
@@ -10,7 +10,7 @@ GROUND_Y = WINDOW_HEIGHT - CHARACTER_HEIGHT   # 地面の高さ
 class Character:
     def __init__(self, name, x, y, moveset_file, can_jump=True):
         self.name = name
-        self.hp = 100
+        self.hp = CHARACTER_HP
         self.down_counter = 0
         self.position = pygame.Rect(x, y, CHARACTER_WIDTH, CHARACTER_HEIGHT)
         self.moves = self.load_moves(moveset_file)

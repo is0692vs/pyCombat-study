@@ -14,6 +14,7 @@ from config import (
     BATTLES_PER_EPISODE,  # 1エピソードでの対戦回数をインポート
     CHARACTER_WIDTH, CHARACTER_HEIGHT, # キャラクタの幅、高さをインポート
     CHARACTER_DISTANCE,  # 初期距離をインポート
+    CHARACTER_HP, #キャラクタの体力をインポート
 )
 
 # ペナルティを受けないエリアの開始位置と終了位置を計算
@@ -34,8 +35,8 @@ class FightingGameEnv:
 
     def reset(self):
         # プレイヤーと敵の初期化
-        self.player.hp = 100
-        self.enemy.hp = 100
+        self.player.hp = CHARACTER_HP
+        self.enemy.hp = CHARACTER_HP
         center_x = WINDOW_WIDTH // 2
         self.player.position = pygame.Rect(center_x - CHARACTER_DISTANCE // 2, GROUND_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT)  # プレイヤーの初期位置を設定
         self.enemy.position = pygame.Rect(center_x + CHARACTER_DISTANCE // 2, GROUND_Y, CHARACTER_WIDTH, CHARACTER_HEIGHT)  # 敵の初期位置を設定

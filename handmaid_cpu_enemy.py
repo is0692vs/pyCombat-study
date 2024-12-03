@@ -17,14 +17,16 @@ def rule_based_action(state):
     # else:
     #     return 2  # 右移動
     
-    # ランダムに行動を選択する確率
-    random_action_prob = 0.3
+    
+    
+    # 適切な行動をしない確率
+    random_action_prob = 0.1
     if random.random() < random_action_prob:
-        return random.choice([0, 1, 2, 3, 4, 5, 6])
+        return 0  # 何もしない
 
-    # 敵が近い場合はパンチ、遠い場合は近づく
-    if abs(player_x - enemy_x) < 50:
-        return 4  # パンチ
+    # 敵が近い場合は何かしらの行動、遠い場合は近づく
+    if abs(player_x - enemy_x) < 100:
+        return random.choice([1, 2, 4, 5, 6]) #近づいてなんかする
     elif player_x < enemy_x:
         return 1  # 左移動
     else:
