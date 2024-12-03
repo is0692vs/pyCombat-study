@@ -39,8 +39,8 @@ class GymFightingGameEnv(gym.Env):
         enemy_hp_change = self.prev_enemy_hp - current_enemy_hp
 
         # 体力変化量に基づく報酬を追加
-        player_reward += enemy_hp_change*HP_DIFFERENCES_REWARD_RATE  # 敵の体力が減った分だけプレイヤーに報酬
-        enemy_reward += player_hp_change*HP_DIFFERENCES_REWARD_RATE  # プレイヤーの体力が減った分だけ敵に報酬
+        player_reward += (enemy_hp_change-player_hp_change)*HP_DIFFERENCES_REWARD_RATE #報酬=敵の体力変化量-自分の体力変化量
+        enemy_reward += (player_hp_change-enemy_hp_change)*HP_DIFFERENCES_REWARD_RATE  #報酬=自分の体力変化量-敵の体力変化量
 
         # 前のフレームの体力を更新
         self.prev_player_hp = current_player_hp
