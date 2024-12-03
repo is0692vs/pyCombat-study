@@ -1,4 +1,4 @@
-#main.pyを実行すると、DQNエージェントが学習を開始します。
+# main.pyで学習
 import gymnasium as gym
 import numpy as np
 from dqn_agent import DQNAgent
@@ -10,6 +10,7 @@ import os
 from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
 import csv
 from config import *  # configの全ての設定をインポート
+import threading  # スレッドモジュールをインポート
 
 # pygameの初期化
 pygame.init()
@@ -37,6 +38,23 @@ agent = DQNAgent(state_size, action_size)
 
 # エピソードごとの結果を保存するリストを初期化
 episode_results = []
+
+# ターミナルからの入力を監視する関数
+def monitor_input():
+    global RENDER, SAVE_MODEL_CONFIG_RESULTS
+    while True:
+        user_input = input()
+        if user_input == 'r':
+            RENDER = not RENDER
+            print(f"RENDER is now set to {RENDER}")
+        elif user_input == 's':
+            SAVE_MODEL_CONFIG_RESULTS = not SAVE_MODEL_CONFIG_RESULTS
+            print(f"SAVE_MODEL_CONFIG_RESULTS is now set to {SAVE_MODEL_CONFIG_RESULTS}")
+
+# 入力監視スレッドを開始
+input_thread = threading.Thread(target=monitor_input)
+input_thread.daemon = True
+input_thread.start()
 
 try:
     # 学習ループ
@@ -86,23 +104,12 @@ try:
                 if RENDER:
                     env.render()
                 
-                clock.tick(FRAME_RATE)#フレームレート(上限)を制御
+                clock.tick(FRAME_RATE)  # フレームレート(上限)を制御
                 
                 # 報酬が発生した時にログを記録
                 if reward != 0:
                     # print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
                     pass
-
-                # キーボードイベントの処理
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_r:
-                            RENDER = not RENDER
-                            print(f"RENDER is now set to {RENDER}")
-                        elif event.key == pygame.K_s:
-                            SAVE_MODEL_CONFIG_RESULTS = not SAVE_MODEL_CONFIG_RESULTS
-                            print(f"SAVE_MODEL_CONFIG_RESULTS is now set to {SAVE_MODEL_CONFIG_RESULTS}")
-            
         # 探索率を減少させる
         agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
 
