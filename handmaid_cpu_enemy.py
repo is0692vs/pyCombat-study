@@ -10,7 +10,7 @@ def rule_based_action(state):
     player_x, player_y, enemy_x, enemy_y, player_hp, enemy_hp, player_is_jumping, enemy_is_jumping = state
 
     # # 敵が近い場合はパンチ、遠い場合は近づく(最適化されてて強すぎ)
-    # if abs(player_x - enemy_x) < 50:
+    # if abs(player_x - enemy_x) <80:
     #     return 4  # パンチ
     # elif player_x < enemy_x:
     #     return 1  # 左移動
@@ -20,12 +20,12 @@ def rule_based_action(state):
     
     
     # 適切な行動をしない確率
-    random_action_prob = 0.1
+    random_action_prob = 0.5
     if random.random() < random_action_prob:
         return 0  # 何もしない
 
     # 敵が近い場合は何かしらの行動、遠い場合は近づく
-    if abs(player_x - enemy_x) < 100:
+    if abs(player_x - enemy_x) < 90:
         return random.choice([1, 2, 4, 5, 6]) #近づいてなんかする
     elif player_x < enemy_x:
         return 1  # 左移動
