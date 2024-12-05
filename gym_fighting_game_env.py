@@ -10,14 +10,16 @@ from config import CAN_JUMP, WINDOW_WIDTH  #
 from config import HP_DIFFERENCES_REWARD_RATE #FTGICEの論文で出てたフレームステップごとの体力変化を報酬にするやつの倍率
 
 class GymFightingGameEnv(gym.Env):
-    def __init__(self):
+    def __init__(self, single_train=False):
         super(GymFightingGameEnv, self).__init__()
         player = Character('Player', 100, GROUND_Y, 'moves.csv', can_jump=CAN_JUMP)
         enemy = Character('Enemy', 500, GROUND_Y, 'moves.csv', can_jump=CAN_JUMP)
         enemy.direction = 'left'
-        self.env = FightingGameEnv(player, enemy)
+        self.env = FightingGameEnv(player, enemy, single_train=single_train)
         self.action_space = spaces.Discrete(7)  # 何もしない、左移動、右移動、ジャンプ、パンチ、キック、上攻撃
-        self.observation_space = spaces.Box(low=0, high=WINDOW_WIDTH, shape=(8,), dtype=np.float32)  # 8次元状態
+        self.observation_space = spaces.Box(
+            low=-np.inf, high=np.inf, shape=(10,), dtype=np.float32  # 2つの行動を追加
+        )
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
@@ -39,14 +41,19 @@ class GymFightingGameEnv(gym.Env):
         enemy_hp_change = self.prev_enemy_hp - current_enemy_hp
 
         # 体力変化量に基づく報酬を追加
-        player_reward += (enemy_hp_change-player_hp_change)*HP_DIFFERENCES_REWARD_RATE #報酬=敵の体力変化量-自分の体力変化量
-        enemy_reward += (player_hp_change-enemy_hp_change)*HP_DIFFERENCES_REWARD_RATE  #報酬=自分の体力変化量-敵の体力変化量
+        player_reward += (enemy_hp_change - player_hp_change) * HP_DIFFERENCES_REWARD_RATE
+        enemy_reward += (player_hp_change - enemy_hp_change) * HP_DIFFERENCES_REWARD_RATE
+
+        if self.env.single_train:
+            enemy_reward = 0  # single_trainの場合、エネミーの報酬を0にする
+
+        total_reward = player_reward + enemy_reward  # プレイヤーとエネミーの報酬を合計
 
         # 前のフレームの体力を更新
         self.prev_player_hp = current_player_hp
         self.prev_enemy_hp = current_enemy_hp
 
-        return np.array(state, dtype=np.float32), (player_reward, enemy_reward), terminated, truncated, {}
+        return np.array(state, dtype=np.float32), total_reward, terminated, truncated, {}
 
     def render(self, mode='human'):
         self.env.render()

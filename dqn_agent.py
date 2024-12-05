@@ -13,7 +13,7 @@ import torch.optim.lr_scheduler as lr_scheduler
 
 class DQNAgent:
     def __init__(self, state_size, action_size):
-        self.state_size = state_size
+        self.state_size = state_size  # 自分と相手の行動分を追加
         self.action_size = action_size
         self.memory = deque(maxlen=MEMORY_SIZE)
         self.gamma = GAMMA
@@ -55,13 +55,16 @@ class DQNAgent:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
-    def learn(self, is_player=True):
+    def learn(self, is_player=True, single_train=False):
         if len(self.memory) < self.batch_size:
             return
         experiences = random.sample(self.memory, self.batch_size)
         states, actions, rewards, next_states, dones = zip(*experiences)
         states = torch.FloatTensor(np.array(states))
-        rewards = torch.FloatTensor([reward[0] if is_player else reward[1] for reward in rewards])
+        if single_train:
+            rewards = torch.FloatTensor(rewards)  # 報酬をそのまま使用
+        else:
+            rewards = torch.FloatTensor([reward[0] if is_player else reward[1] for reward in rewards])
         next_states = torch.FloatTensor(np.array(next_states))
         dones = torch.FloatTensor(dones)
 

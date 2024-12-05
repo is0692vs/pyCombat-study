@@ -23,7 +23,7 @@ NO_PENALTY_AREA_START = (WINDOW_WIDTH // 2) - (NO_PENALTY_AREA_WIDTH // 2)
 NO_PENALTY_AREA_END = (WINDOW_WIDTH // 2) + (NO_PENALTY_AREA_WIDTH // 2)
 
 class FightingGameEnv:
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, single_train=False):
         self.player = player
         self.enemy = enemy
         self.player.set_enemy(self.enemy)  # プレイヤーに敵を設定
@@ -35,6 +35,9 @@ class FightingGameEnv:
         self.current_battle = 0  # 現在の試合数を初期化
         self.player_reward = INITIAL_PLAYER_REWARD
         self.enemy_reward = INITIAL_ENEMY_REWARD
+        self.player_action = 0
+        self.enemy_action = 0
+        self.single_train = single_train
 
     def reset(self):
         # プレイヤーと敵の初期化
@@ -61,10 +64,16 @@ class FightingGameEnv:
         enemy_hp = self.enemy.hp
         player_is_jumping = self.player.is_jumping
         enemy_is_jumping = self.enemy.is_jumping
-        return np.array([player_pos[0], player_pos[1], enemy_pos[0], enemy_pos[1], player_hp, enemy_hp, player_is_jumping, enemy_is_jumping], dtype=np.float32)
+        return np.array([
+            player_pos[0], player_pos[1], enemy_pos[0], enemy_pos[1],
+            player_hp, enemy_hp, player_is_jumping, enemy_is_jumping,
+            self.player_action, self.enemy_action  # 現在の行動を追加
+        ], dtype=np.float32)
 
     def step(self, action):
         player_action, enemy_action = action
+        self.player_action = player_action
+        self.enemy_action = enemy_action
         player_reward = 0
         enemy_reward = 0
         self.step_count += 1  # ステップ数をカウント
@@ -176,7 +185,11 @@ class FightingGameEnv:
             enemy_reward += ((NO_PENALTY_AREA_START - self.enemy.position.x) / NO_PENALTY_AREA_START) * EDGE_PENALTY
         elif self.enemy.position.x > NO_PENALTY_AREA_END:
             enemy_reward += ((self.enemy.position.x - NO_PENALTY_AREA_END) / (WINDOW_WIDTH - NO_PENALTY_AREA_END)) * EDGE_PENALTY
-
+        
+        
+        
+        if self.single_train:
+            enemy_reward = 0  # single_trainの場合、エネミーの報酬を0にする
         total_reward = (player_reward, enemy_reward)
         return self.get_state(), total_reward, done
 

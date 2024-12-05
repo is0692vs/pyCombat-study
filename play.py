@@ -25,7 +25,7 @@ time.sleep(1)
 env = gym.make('FightingGame-v0')
 
 # state_sizeとaction_sizeを取得
-state_size = env.observation_space.shape[0]
+state_size = env.observation_space.shape[0] + 2  # 現在の行動分を追加
 action_size = env.action_space.n
 
 # DQNAgentのインスタンスを作成

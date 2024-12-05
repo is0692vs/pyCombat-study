@@ -28,7 +28,7 @@ gym.register(
 time.sleep(1)
 
 # 環境の初期化
-env = gym.make('FightingGame-v0')
+env = gym.make('FightingGame-v0', single_train=True)  # single_trainフラグをTrueに設定
 
 # state_sizeとaction_sizeを取得
 state_size = env.observation_space.shape[0]
@@ -86,10 +86,10 @@ try:
                 next_state, reward, terminated, truncated, _ = env.step(action)
                 done = terminated or truncated
                 agent.remember(state, action, reward, next_state, done)
-                agent.learn(is_player=True)  # プレイヤーの学習
+                agent.learn(is_player=True, single_train=True)  # プレイヤーの学習
                 state = next_state
-                total_player_reward += reward[0]  # プレイヤーの報酬を合計する
-                total_enemy_reward += reward[1]  # 敵の報酬を合計する
+                total_player_reward += reward  # プレイヤーの報酬を合計する
+                total_enemy_reward += 0  # 敵の報酬を常に0にする
                 step_count += 1
                 total_steps += 1  # ステップ数をカウント
 
@@ -125,11 +125,10 @@ finally:
         # 学習が終了した後にモデルを保存
         timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M")
         player_model_path = os.path.join('player-agent', f'single_{timestamp}_Qnet.pth')
-        config_path = os.path.join('agent-status', f'single_config_{timestamp}.csv')
-
         torch.save(agent.player_q_network.state_dict(), player_model_path)
 
         # config設定をCSV形式で保存
+        config_path = os.path.join('agent-status', f'single_config_{timestamp}.csv')
         config_data = {key: value for key, value in globals().items() if key.isupper()}
         config_data['NOTE'] = f"学習はエピソード {episode+1} で中断されました。"
 
@@ -137,7 +136,6 @@ finally:
             writer = csv.writer(csvfile)
             for key, value in config_data.items():
                 writer.writerow([key, value])
-
 
         # エピソードごとの結果をCSVファイルに保存
         results_path = os.path.join('result', f'single_results_{timestamp}.csv')

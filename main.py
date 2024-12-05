@@ -27,10 +27,10 @@ gym.register(
 time.sleep(1)
 
 # 環境の初期化
-env = gym.make('FightingGame-v0')
+env = gym.make('FightingGame-v0', single_train=False)  # single_trainフラグをFalseに設定
 
 # state_sizeとaction_sizeを取得
-state_size = env.observation_space.shape[0]
+state_size = env.observation_space.shape[0]  # '+ 2' を削除
 action_size = env.action_space.n
 
 # DQNAgentのインスタンスを作成
