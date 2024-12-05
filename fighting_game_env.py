@@ -15,6 +15,7 @@ from config import (
     CHARACTER_WIDTH, CHARACTER_HEIGHT, # キャラクタの幅、高さをインポート
     CHARACTER_DISTANCE,  # 初期距離をインポート
     CHARACTER_HP, #キャラクタの体力をインポート
+    INITIAL_PLAYER_REWARD, INITIAL_ENEMY_REWARD
 )
 
 # ペナルティを受けないエリアの開始位置と終了位置を計算
@@ -32,6 +33,8 @@ class FightingGameEnv:
         self.prev_distance = abs(self.player.position.x - self.enemy.position.x)  # 初期距離を設定
         self.step_count = 0  # ステップ数を初期化
         self.current_battle = 0  # 現在の試合数を初期化
+        self.player_reward = INITIAL_PLAYER_REWARD
+        self.enemy_reward = INITIAL_ENEMY_REWARD
 
     def reset(self):
         # プレイヤーと敵の初期化
@@ -46,6 +49,8 @@ class FightingGameEnv:
         self.enemy.down_counter = 0
         self.prev_distance = abs(self.player.position.x - self.enemy.position.x)  # 初期距離を設定
         self.step_count = 0  # ステップ数をリセット
+        self.player_reward = INITIAL_PLAYER_REWARD
+        self.enemy_reward = INITIAL_ENEMY_REWARD
         return self.get_state()
 
     def get_state(self):

@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 import torch
 import os
-from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
+from config import BATTLES_PER_EPISODE, INITIAL_PLAYER_REWARD, INITIAL_ENEMY_REWARD  # 対戦回数と初期報酬をインポート
 import csv
 from config import *  # configの全ての設定をインポート
 import threading  # スレッドモジュールをインポート
@@ -60,13 +60,13 @@ try:
     # 学習ループ
     for episode in range(EPISODES):
         start_time = time.time()  # エピソードの開始時間を記録
-        total_player_reward = 0
-        total_enemy_reward = 0
+        total_player_reward = INITIAL_PLAYER_REWARD
+        total_enemy_reward = INITIAL_ENEMY_REWARD
         total_steps = 0  # 合計ステップ数を初期化
 
         # 報酬をリセット
-        env.unwrapped.env.player.reward = 0
-        env.unwrapped.env.enemy.reward = 0
+        env.unwrapped.env.player.reward = INITIAL_PLAYER_REWARD
+        env.unwrapped.env.enemy.reward = INITIAL_ENEMY_REWARD
 
         for battle in range(BATTLES_PER_EPISODE):
             env.unwrapped.env.current_battle = battle + 1  # 現在の試合数を設定

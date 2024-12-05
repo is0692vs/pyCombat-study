@@ -5,7 +5,7 @@ from dqn_agent import DQNAgent
 import pygame
 import time
 from game import GROUND_Y  
-from config import FRAME_RATE, MAX_STEPS, BATTLES_PER_EPISODE  
+from config import FRAME_RATE, MAX_STEPS, BATTLES_PER_EPISODE, INITIAL_PLAYER_REWARD, INITIAL_ENEMY_REWARD  # フレームレート、最大ステップ数、対戦回数、初期報酬をインポート 
 
 # pygameの初期化
 pygame.init()
@@ -43,8 +43,7 @@ player_model_path = 'player-agent/player_2024-11-21-09:20_Qnet.pth'  # 実際の
 enemy_model_path = 'enemy-agent/enemy_2024-11-21-09:20_Qnet.pth'  # 実際のファイルパス
 load_model(agent, player_model_path, enemy_model_path)
 
-# DQNAgentのインスタンスを作成
-agent = DQNAgent(state_size, action_size)
+
 
 # 探索率を低く設定
 agent.epsilon = 0.01
@@ -54,13 +53,15 @@ player_wins = 0
 enemy_wins = 0
 timeouts = 0
 
+# 初期報酬を設定
+total_player_reward = INITIAL_PLAYER_REWARD
+total_enemy_reward = INITIAL_ENEMY_REWARD
+
 # 指定した回数だけ連続で対戦
 for battle in range(BATTLES_PER_EPISODE):
     env.unwrapped.env.current_battle = battle + 1  # 現在の試合数を設定
     state, _ = env.reset()
     done = False
-    total_player_reward = 0
-    total_enemy_reward = 0
     step_count = 0
     while not done and step_count < MAX_STEPS:
         # エージェントの行動を決定

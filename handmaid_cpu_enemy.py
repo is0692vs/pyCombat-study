@@ -19,15 +19,33 @@ def rule_based_action(state):
     
     
     
-    # 適切な行動をしない確率
-    random_action_prob = 0.5
+    # # 適切な行動をしない確率
+    # random_action_prob = 0.7
+    # if random.random() < random_action_prob:
+    #     return 0  # 何もしない
+
+    # # 敵が近い場合は何かしらの行動、遠い場合は近づく
+    # if abs(player_x - enemy_x) < 90:
+    #     return random.choice([3, 5]) #近づいてなんかする
+    # elif player_x < enemy_x:
+    #     return 1  # 左移動
+    # else:
+    #     return 2  # 右移動
+    
+    
+    # copilot作のちょうどいいcpu
+    random_action_prob = 0.7
     if random.random() < random_action_prob:
         return 0  # 何もしない
 
-    # 敵が近い場合は何かしらの行動、遠い場合は近づく
-    if abs(player_x - enemy_x) < 90:
-        return random.choice([1, 2, 4, 5, 6]) #近づいてなんかする
+    # 敵が近い場合は攻撃、遠い場合は近づく
+    if abs(player_x - enemy_x) < 80:
+        return random.choice([4, 5, 6])  # パンチ、キック、上攻撃
     elif player_x < enemy_x:
         return 1  # 左移動
     else:
         return 2  # 右移動
+
+    # ジャンプの追加
+    if not enemy_is_jumping and random.random() < 0.1:
+        return 3  # ジャンプ

@@ -61,13 +61,13 @@ try:
     # 学習ループ
     for episode in range(EPISODES):
         start_time = time.time()  # エピソードの開始時間を記録
-        total_player_reward = 0
-        total_enemy_reward = 0
+        total_player_reward = INITIAL_PLAYER_REWARD
+        total_enemy_reward = INITIAL_ENEMY_REWARD
         total_steps = 0  # 合計ステップ数を初期化
 
         # 報酬をリセット
-        env.unwrapped.env.player.reward = 0
-        env.unwrapped.env.enemy.reward = 0
+        env.unwrapped.env.player.reward = INITIAL_PLAYER_REWARD
+        env.unwrapped.env.enemy.reward = INITIAL_ENEMY_REWARD
 
         for battle in range(BATTLES_PER_EPISODE):
             env.unwrapped.env.current_battle = battle + 1  # 現在の試合数を設定
