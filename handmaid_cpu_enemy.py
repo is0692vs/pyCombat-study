@@ -1,5 +1,6 @@
 # handmaid_cpu_enemy.py
 import random
+from config import CHARACTER_HP
 
 def rule_based_action(state):
     """
@@ -37,6 +38,14 @@ def rule_based_action(state):
     random_action_prob = 0.7
     if random.random() < random_action_prob:
         return 0  # 何もしない
+
+    # 体力が減るたびに逃げる行動の確率を増やす
+    escape_prob = (1 - (enemy_hp / CHARACTER_HP)) * 0.5  # 体力が減るほど逃げる確率が増える
+    if random.random() < escape_prob:
+        if player_x < enemy_x:
+            return 2  # 右移動
+        else:
+            return 1  # 左移動
 
     # 敵が近い場合は攻撃、遠い場合は近づく
     if abs(player_x - enemy_x) < 80:

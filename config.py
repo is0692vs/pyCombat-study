@@ -6,7 +6,7 @@ CHARACTER_WIDTH = 30
 CHARACTER_HEIGHT = 60
 CHARACTER_HP=200
 # キャラクタの初期距離の設定
-CHARACTER_DISTANCE = 500  
+CHARACTER_DISTANCE = 100  
 
 # フレームレートの設定
 FRAME_RATE = 60# ゲームの最大フレームレート
@@ -24,7 +24,7 @@ SAVE_MODEL_CONFIG_RESULTS = False
 BATTLES_PER_EPISODE = 1  
 
 #学習ループのエピソード数
-EPISODES = 500  
+EPISODES = 900  
 
 # 1試合の最大ステップ数
 MAX_STEPS = 2000
@@ -35,15 +35,15 @@ CAN_JUMP = True
 
 
 # プレイヤーの報酬の設定
-PLAYER_REWARD_HIT = 0.0  # 攻撃が当たった場合の報酬を増加
-PLAYER_PENALTY_MISS = -0.0  # 攻撃が外れた場合のペナルティを追加
-PLAYER_REWARD_KILL = 00  # 敵を倒した場合の報酬はそのまま
-PLAYER_PENALTY_LOSE = -00  # プレイヤーが負けた場合のペナルティを増加
+PLAYER_REWARD_HIT = 3.0  # 攻撃が当たった場合の報酬を増加
+PLAYER_PENALTY_MISS = -1.0  # 攻撃が外れた場合のペナルティを追加
+PLAYER_REWARD_KILL = 10  # 敵を倒した場合の報酬はそのまま
+PLAYER_PENALTY_LOSE = -10  # プレイヤーが負けた場合のペナルティを増加
 PLAYER_REWARD_DISTANCE_CLOSE = 0  # 敵に近づいた場合の報酬を追加
 PLAYER_PENALTY_DISTANCE_FAR = -0  # 敵から離れた場合のペナルティを追加
-PLAYER_PENALTY_ON_TOP = -0  # 相手の上に乗った場合のペナルティを増加
-PLAYER_PENALTY_HIT = -0  # 攻撃を受けた場合のペナルティ
-INITIAL_PLAYER_REWARD = 400 # 初期報酬を設定
+PLAYER_PENALTY_ON_TOP = -1  # 相手の上に乗った場合のペナルティを増加
+PLAYER_PENALTY_HIT = -1  # 攻撃を受けた場合のペナルティ
+INITIAL_PLAYER_REWARD = 0 # 初期報酬を設定
 
 # 敵の報酬の設定
 ENEMY_REWARD_HIT = 0.0  # 攻撃が当たった場合の報酬を増加
@@ -54,10 +54,10 @@ ENEMY_REWARD_DISTANCE_CLOSE = 0  # プレイヤーに近づいた場合の報酬
 ENEMY_PENALTY_DISTANCE_FAR = -0  # プレイヤーから離れた場合のペナルティを追加
 ENEMY_PENALTY_ON_TOP = -0  # 相手の上に乗った場合のペナルティを増加
 ENEMY_PENALTY_HIT = -0  # 攻撃を受けた場合のペナルティ
-INITIAL_ENEMY_REWARD = 400 # 初期報酬を設定
+INITIAL_ENEMY_REWARD = 0 # 初期報酬を設定
 
 # 画面端のペナルティの設定
-EDGE_PENALTY = -0.00  # 画面端にいる場合のペナルティ
+EDGE_PENALTY = -0.01  # 画面端にいる場合のペナルティ
 
 # 論文のフレームステップ数ごとの体力変化の報酬倍率
 HP_DIFFERENCES_REWARD_RATE=1.0
