@@ -32,7 +32,7 @@ MAX_STEPS = 2000
 # ダウン周り
 MAX_DOWN_COUNT = 10  # ダウンカウントの最大値
 DOWN_LENGTH = 500  # ダウン状態のステップ数
-DOWNCOUNT_DECREASE_RATE = 200  # ダウンカウント減少レートstep
+DOWNCOUNT_DECREASE_RATE = 100  # ダウンカウント減少レートstep
 DOWNED_PENALTY = -10  # ダウンさせられた時のペナルティ
 
 # ジャンプ許可の設定
