@@ -1,12 +1,12 @@
 # game.pyは以下の通りです。
 import pygame
 import csv
-from config import WINDOW_WIDTH, WINDOW_HEIGHT  # ウィンドウの大きさの設定をインポート
-from config import CHARACTER_HEIGHT, CHARACTER_WIDTH, CHARACTER_HP  # キャラクタの幅と高さとHPの設定をインポート
-# ウィンドウと地面の設定
+from config import (
+    WINDOW_WIDTH, WINDOW_HEIGHT, CHARACTER_HP, CHARACTER_WIDTH, CHARACTER_HEIGHT, MAX_DOWN_COUNT, DOWN_LENGTH, DOWNCOUNT_DECREASE_RATE, DOWNED_PENALTY
+)
+
 GROUND_Y = WINDOW_HEIGHT - CHARACTER_HEIGHT   # 地面の高さ
 
-# キャラクタークラス
 class Character:
     def __init__(self, name, x, y, moveset_file, can_jump=True):
         self.name = name
@@ -27,7 +27,13 @@ class Character:
         self.can_attack = True  # 攻撃可能かどうかのフラグ
         self.enemy = None  # 敵キャラクターの参照を保持
         self.can_jump = can_jump  # ジャンプ許可フラグ
+        self.step_count = 0  # ステップカウント
 
+
+    def set_enemy(self, enemy):
+        self.enemy = enemy
+
+        
     def load_moves(self, moveset_file):
         moves = {}
         with open(moveset_file, 'r') as f:
@@ -45,9 +51,23 @@ class Character:
                 }
         return moves
 
-    def set_enemy(self, enemy):
-        self.enemy = enemy
 
+    def draw(self, screen):
+        # プレイヤーと敵の色を設定
+        if self.name == 'Player':
+            base_color = (0, 0, 255)  # 青
+        else:
+            base_color = (255, 0, 0)  # 赤
+
+        # ダウン状態の時のみ色を薄くする
+        if self.is_down:
+            color = tuple(int(c * 0.1) for c in base_color)
+        else:
+            color = base_color
+
+        pygame.draw.rect(screen, color, self.position)
+        
+        
     def draw_stats(self, screen, x, y):
         pygame.font.init()  # フォントモジュールの初期化
         font = pygame.font.Font(None, 36)
@@ -147,10 +167,17 @@ class Character:
 
             if attack_rect.colliderect(enemy.position):
                 enemy.hp -= damage
+                if not enemy.is_down:  # 敵がダウン状態でない場合にのみダウンカウントを加算
+                    enemy.down_counter += move['down_counter_add']
+                    if enemy.down_counter >= MAX_DOWN_COUNT:
+                        enemy.is_down = True
+                        enemy.down_time = DOWN_LENGTH
+                        print(f'{enemy.name} is down!')
+                        enemy.down_counter = 0  # ダウンカウントをリセット
+
                 if enemy.hp <= 0:
                     enemy.hp = 0
                     enemy.is_down = True
-                    enemy.down_counter += move['down_counter_add']
 
                 self.attack_timer = move['duration']  # 攻撃範囲の表示時間
                 self.attack_range_rect = attack_rect
@@ -164,46 +191,68 @@ class Character:
         return False  # 攻撃が実行されなかった場合
 
     def update(self):
+        self.step_count += 1
+
         if self.attack_timer > 0:
             self.attack_timer -= 1
         else:
             self.attack_range_rect = None
             self.can_attack = True  # 攻撃可能に戻す
 
-# 環境クラス
+        if self.is_down:
+            self.down_time -= 1
+            if self.down_time <= 0:
+                self.is_down = False
+
+        if self.step_count % DOWNCOUNT_DECREASE_RATE == 0:
+            self.down_counter = max(0, self.down_counter - 1)  # ダウンカウントを減少
+
+
+        # ダウン状態の変化を検出してペナルティを適用
+        if self.is_down and not self.was_down:
+            # print("test3")
+            self.reward += DOWNED_PENALTY
+
+        # ダウン状態の変化を記録
+        self.was_down = self.is_down
+
 class FightingGameEnv:
     def __init__(self, player, enemy):
         self.player = player
         self.enemy = enemy
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('Fighting Game')
+        self.prev_distance = abs(self.player.position.x - self.enemy.position.x)
+        self.step_count = 0
 
     def step(self, action):
         player_action, enemy_action = action
     
         # プレイヤーの行動
-        if player_action == 0:
-            self.player.move('left', self.enemy)
-        elif player_action == 1:
-            self.player.move('right', self.enemy)
-        elif player_action == 2:
-            self.player.jump()
-        elif player_action == 3:
-            self.player.attack('punch', self.enemy)
-        elif player_action == 4:
-            self.player.attack('kick', self.enemy)
+        if not self.player.is_down:
+            if player_action == 0:
+                self.player.move('left', self.enemy)
+            elif player_action == 1:
+                self.player.move('right', self.enemy)
+            elif player_action == 2:
+                self.player.jump()
+            elif player_action == 3:
+                self.player.attack('punch', self.enemy)
+            elif player_action == 4:
+                self.player.attack('kick', self.enemy)
     
         # 敵の行動
-        if enemy_action == 0:
-            self.enemy.move('left', self.player)
-        elif enemy_action == 1:
-            self.enemy.move('right', self.player)
-        elif enemy_action == 2:
-            self.enemy.jump()
-        elif enemy_action == 3:
-            self.enemy.attack('punch', self.player)
-        elif enemy_action == 4:
-            self.enemy.attack('kick', self.player)
+        if not self.enemy.is_down:
+            if enemy_action == 0:
+                self.enemy.move('left', self.player)
+            elif enemy_action == 1:
+                self.enemy.move('right', self.player)
+            elif enemy_action == 2:
+                self.enemy.jump()
+            elif enemy_action == 3:
+                self.enemy.attack('punch', self.player)
+            elif enemy_action == 4:
+                self.enemy.attack('kick', self.player)
     
         self.player.apply_gravity(self.enemy)
         self.enemy.apply_gravity(self.player)
@@ -230,18 +279,14 @@ class FightingGameEnv:
 
     def render(self):
         self.screen.fill((0, 0, 0))
-        pygame.draw.rect(self.screen, (255, 0, 0), self.player.position)
-        pygame.draw.rect(self.screen, (0, 0, 255), self.enemy.position)
-    
-        self.player.draw_stats(self.screen, 10, 10)  # キャラクタ1のステータス表示
-        self.enemy.draw_stats(self.screen, WINDOW_WIDTH - 200, 10)  # キャラクタ2のステータス表示
-    
-        self.player.draw_eyes(self.screen)  # 目を描画
-        self.enemy.draw_eyes(self.screen)  # 目を描画
-    
+        
+        self.player.draw(self.screen)
+        self.enemy.draw(self.screen)
+        
         if self.player.attack_range_rect:
             pygame.draw.rect(self.screen, (255, 255, 0), self.player.attack_range_rect, 2)
-    
+        
         pygame.display.flip()
+
     def close(self):
         pygame.quit()
