@@ -16,7 +16,7 @@ from config import (
     CHARACTER_DISTANCE,  # 初期距離をインポート
     CHARACTER_HP, #キャラクタの体力をインポート
     INITIAL_PLAYER_REWARD, INITIAL_ENEMY_REWARD,
-    DOWNED_PENALTY
+    TEST_REWARD, RIGHT_SIDE_START, RIGHT_SIDE_END,
 )
 
 # ペナルティを受けないエリアの開始位置と終了位置を計算
@@ -100,19 +100,22 @@ class FightingGameEnv:
             elif player_action == 4:
                 if self.player.attack('punch', self.enemy):
                     player_reward += PLAYER_REWARD_HIT
-                    enemy_reward += ENEMY_PENALTY_HIT
+                    if not self.single_train:
+                        enemy_reward += ENEMY_PENALTY_HIT
                 else:
                     player_reward += PLAYER_PENALTY_MISS
             elif player_action == 5:
                 if self.player.attack('kick', self.enemy):
                     player_reward += PLAYER_REWARD_HIT
-                    enemy_reward += ENEMY_PENALTY_HIT
+                    if not self.single_train:
+                        enemy_reward += ENEMY_PENALTY_HIT
                 else:
                     player_reward += PLAYER_PENALTY_MISS
             elif player_action == 6:
                 if self.player.attack('uppercut', self.enemy):
                     player_reward += PLAYER_REWARD_HIT
-                    enemy_reward += ENEMY_PENALTY_HIT
+                    if not self.single_train:
+                        enemy_reward += ENEMY_PENALTY_HIT
                 else:
                     player_reward += PLAYER_PENALTY_MISS
 
@@ -128,22 +131,28 @@ class FightingGameEnv:
                 self.enemy.jump()
             elif enemy_action == 4:
                 if self.enemy.attack('punch', self.player):
-                    enemy_reward += ENEMY_REWARD_HIT
+                    if not self.single_train:
+                        enemy_reward += ENEMY_REWARD_HIT
                     player_reward += PLAYER_PENALTY_HIT
                 else:
-                    enemy_reward += ENEMY_PENALTY_MISS
+                    if not self.single_train:
+                        enemy_reward += ENEMY_PENALTY_MISS
             elif enemy_action == 5:
                 if self.enemy.attack('kick', self.player):
-                    enemy_reward += ENEMY_REWARD_HIT
+                    if not self.single_train:
+                        enemy_reward += ENEMY_REWARD_HIT
                     player_reward += PLAYER_PENALTY_HIT
                 else:
-                    enemy_reward += ENEMY_PENALTY_MISS
+                    if not self.single_train:
+                        enemy_reward += ENEMY_PENALTY_MISS
             elif enemy_action == 6:
                 if self.enemy.attack('uppercut', self.player):
-                    enemy_reward += ENEMY_REWARD_HIT
+                    if not self.single_train:
+                        enemy_reward += ENEMY_REWARD_HIT
                     player_reward += PLAYER_PENALTY_HIT
                 else:
-                    enemy_reward += ENEMY_PENALTY_MISS
+                    if not self.single_train:
+                        enemy_reward += ENEMY_PENALTY_MISS
 
         self.player.apply_gravity(self.enemy)
         self.enemy.apply_gravity(self.player)
@@ -152,16 +161,25 @@ class FightingGameEnv:
         self.enemy.update()
 
 
+        # テスト用報酬(相対位置)
+        relative_x = abs(self.player.position.x - self.enemy.position.x)
+        # print(relative_x)
+        if 0 <= relative_x <= 10:
+            player_reward += TEST_REWARD
+            # print("TEST_REWARD added!")
+
             
         done = self.player.hp <= 0 or self.enemy.hp <= 0
         if done or self.step_count >= MAX_STEPS:
             health_difference_reward = (self.player.hp - self.enemy.hp) * HEALTH_DIFFERENCE_REWARD_RATE
             player_reward += health_difference_reward
-            enemy_reward -= health_difference_reward
+            if not self.single_train:
+                enemy_reward -= health_difference_reward
         if self.enemy.hp <= 0:
             player_reward += PLAYER_REWARD_KILL
         if self.player.hp <= 0:
-            enemy_reward += ENEMY_REWARD_KILL
+            if not self.single_train:
+                enemy_reward += ENEMY_REWARD_KILL
 
         if self.single_train:
             enemy_reward = 0

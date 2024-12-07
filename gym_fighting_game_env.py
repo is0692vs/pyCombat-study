@@ -41,10 +41,11 @@ class GymFightingGameEnv(gym.Env):
 
         # 体力変化量に基づく報酬を追加
         player_reward += (enemy_hp_change - player_hp_change) * HP_DIFFERENCES_REWARD_RATE
-        enemy_reward += (player_hp_change - enemy_hp_change) * HP_DIFFERENCES_REWARD_RATE
+        if not self.env.single_train:
+            enemy_reward += (player_hp_change - enemy_hp_change) * HP_DIFFERENCES_REWARD_RATE
 
-        if self.env.single_train:
-            enemy_reward = 0  # single_trainの場合、エネミーの報酬を0にする
+        # if self.env.single_train:
+        #     enemy_reward = 0  # single_trainの場合、エネミーの報酬を0にする
 
         total_reward = player_reward + enemy_reward  # プレイヤーとエネミーの報酬を合計
 

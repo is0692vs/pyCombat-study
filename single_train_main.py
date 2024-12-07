@@ -77,8 +77,13 @@ try:
             done = False
             step_count = 0
             while not done and step_count < MAX_STEPS:
+                
                 # 学習するキャラクタの行動を決定
-                player_action = agent.act(state, is_player=True)
+                if np.random.rand() < agent.epsilon:
+                    player_action = env.action_space.sample()
+                else:
+                    player_action = agent.act(state, is_player=True)
+                                        
                 # ルールベースのキャラクタの行動を決定
                 enemy_action = rule_based_action(state)
 
