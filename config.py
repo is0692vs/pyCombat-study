@@ -13,7 +13,7 @@ CHARACTER_HP=200
 CHARACTER_DISTANCE = 200  
 
 # フレームレートの設定
-FRAME_RATE = 60# ゲームの最大フレームレート
+FRAME_RATE = 120# ゲームの最大フレームレート
 
 # 画面を描画するかどうかの設定(実行中に可変)
 global RENDER
@@ -25,10 +25,10 @@ SAVE_MODEL_CONFIG_RESULTS = False
 
 
 # 1エピソードでの対戦回数
-BATTLES_PER_EPISODE = 1  
+BATTLES_PER_EPISODE = 5  
 
 #学習ループのエピソード数
-EPISODES = 2000  
+EPISODES = 500  
 
 # 1試合の最大ステップ数
 MAX_STEPS = 2000
@@ -46,18 +46,18 @@ CAN_JUMP = True
 MAX_DOWN_COUNT = 10  # ダウンカウントの最大値
 DOWN_LENGTH = 500  # ダウン状態のステップ数
 DOWNCOUNT_DECREASE_RATE = 100  # ダウンカウント減少レートstep
-DOWNED_PENALTY = -10  # ダウンさせられた時のペナルティ
+DOWNED_PENALTY = 0  # ダウンさせられた時のペナルティ
 
 
 # プレイヤーの報酬の設定
-PLAYER_REWARD_HIT = 3.0  # 攻撃が当たった場合の報酬を増加
-PLAYER_PENALTY_MISS = -1.0  # 攻撃が外れた場合のペナルティを追加
-PLAYER_REWARD_KILL = 10  # 敵を倒した場合の報酬はそのまま
-PLAYER_PENALTY_LOSE = -10  # プレイヤーが負けた場合のペナルティを増加
+PLAYER_REWARD_HIT = 0  # 攻撃が当たった場合の報酬を増加
+PLAYER_PENALTY_MISS = -0  # 攻撃が外れた場合のペナルティを追加
+PLAYER_REWARD_KILL = 0  # 敵を倒した場合の報酬はそのまま
+PLAYER_PENALTY_LOSE = -0  # プレイヤーが負けた場合のペナルティを増加
 PLAYER_REWARD_DISTANCE_CLOSE = 0  # 敵に近づいた場合の報酬を追加
 PLAYER_PENALTY_DISTANCE_FAR = -0  # 敵から離れた場合のペナルティを追加
-PLAYER_PENALTY_ON_TOP = -1  # 相手の上に乗った場合のペナルティを増加
-PLAYER_PENALTY_HIT = -1  # 攻撃を受けた場合のペナルティ
+PLAYER_PENALTY_ON_TOP = -0  # 相手の上に乗った場合のペナルティを増加
+PLAYER_PENALTY_HIT = -0  # 攻撃を受けた場合のペナルティ
 INITIAL_PLAYER_REWARD = 0 # 初期報酬を設定
 
 # 敵の報酬の設定
@@ -93,9 +93,9 @@ GAMMA = 0.8  # 将来の報酬をどれだけ重視するかを決定するパ�
 EPSILON = 1.0  # 初期の探索率
 EPSILON_MIN = 0.1 # 最小の探索率、0に近づけると、エージェントは最終的に探索を完全にやめ、最適な行動のみを取る
 EPSILON_DECAY = 0.99  # 探索率の減衰率を緩やかにして、徐々に最適行動を学習
-BATCH_SIZE = 128  # 学習時にリプレイバッファからサンプリングする経験の数。バッチサイズが大きいほど、学習が安定しますが、計算コストが増加します。
+BATCH_SIZE = 256  # 学習時にリプレイバッファからサンプリングする経験の数。バッチサイズが大きいほど、学習が安定しますが、計算コストが増加します。
 UPDATE_TARGET_EVERY = 5  # 小さい値に設定すると、ターゲットネットワークが頻繁に更新され、学習が安定しますが、計算コストが増加
-LEARNING_RATE = 0.0001  # Qネットワークの重みを更新する速度,小さい値に設定すると、学習が遅くなりますが、安定した学習が期待できる
+LEARNING_RATE = 0.001  # Qネットワークの重みを更新する速度,小さい値に設定すると、学習が遅くなりますが、安定した学習が期待できる
 # 学習率スケジューラの設定
 LR_STEP_SIZE = 5  # 学習率を更新する間隔を短縮
 LR_GAMMA = 0.99  # 学習率の減衰率を調整

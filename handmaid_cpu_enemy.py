@@ -35,7 +35,7 @@ def rule_based_action(state):
     
     
     # 適切な行動をしない確率
-    random_action_prob = 0.8
+    random_action_prob = 0.5
     if random.random() < random_action_prob:
         return 0  # 何もしない
 
