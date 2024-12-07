@@ -18,7 +18,7 @@ class GymFightingGameEnv(gym.Env):
         self.env = FightingGameEnv(player, enemy, single_train=single_train)
         self.action_space = spaces.Discrete(7)  # 何もしない、左移動、右移動、ジャンプ、パンチ、キック、上攻撃
         self.observation_space = spaces.Box(
-            low=-np.inf, high=np.inf, shape=(12,), dtype=np.float32  # 状態ベクトルのサイズを更新
+            low=-np.inf, high=np.inf, shape=(10,), dtype=np.float32  # 状態ベクトルのサイズを更新
         )
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)

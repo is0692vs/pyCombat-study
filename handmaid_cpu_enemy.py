@@ -8,30 +8,16 @@ def rule_based_action(state):
     state: 環境の状態
     return: 行動 (0: 何もしない, 1: 左移動, 2: 右移動, 3: ジャンプ, 4: パンチ, 5: キック, 6: 上攻撃)
     """
-    player_x, player_y, enemy_x, enemy_y, player_hp, enemy_hp, player_is_jumping, enemy_is_jumping, player_is_down, enemy_is_down, player_action, enemy_action = state
+    relative_x, relative_y, player_hp, enemy_hp, player_is_jumping, enemy_is_jumping, player_is_down, enemy_is_down, player_action, enemy_action = state
 
     # # 敵が近い場合はパンチ、遠い場合は近づく(最適化されてて強すぎ)
-    # if abs(player_x - enemy_x) <80:
+    # if abs(relative_x) <80:
     #     return 4  # パンチ
-    # elif player_x < enemy_x:
+    # elif relative_x < 0:
     #     return 1  # 左移動
     # else:
     #     return 2  # 右移動
     
-    
-    
-    # 適切な行動をしない確率
-    random_action_prob = 0.6
-    if random.random() < random_action_prob:
-        return 0  # 何もしない
-
-    # 敵が近い場合は何かしらの行動、遠い場合は近づく
-    if abs(player_x - enemy_x) < 50:
-        return random.choice([3, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6]) #近づいてなんかする
-    elif player_x < enemy_x:
-        return 1  # 左移動
-    else:
-        return 2  # 右移動
     
     
     # # 適切な行動をしない確率
@@ -39,27 +25,37 @@ def rule_based_action(state):
     # if random.random() < random_action_prob:
     #     return 0  # 何もしない
 
-    # # 体力が減るたびに逃げる行動の確率を増やす
-    # escape_prob = (1 - (enemy_hp / CHARACTER_HP)) * 0.5  # 体力が減るほど逃げる確率が増える
-    # if random.random() < escape_prob:
-    #     if player_x < enemy_x:
-    #         return 2  # 右移動
-    #     else:
-    #         return 1  # 左移動
-
-    # # プレイヤーのHPが低い場合、手加減する確率を増やす
-    # mercy_prob = (1 - (player_hp / CHARACTER_HP)) * 0.5  # プレイヤーの体力が減るほど手加減する確率が増える
-    # if random.random() < mercy_prob:
-    #     return 0  # 何もしない
-
-    # # 敵が近い場合は攻撃、遠い場合は近づく
-    # if abs(player_x - enemy_x) < 80:
-    #     return random.choice([4, 5, 6])  # パンチ、キック、上攻撃
-    # elif player_x < enemy_x:
+    # # 敵が近い場合は何かしらの行動、遠い場合は近づく
+    # if abs(relative_x) < 50:
+    #     return random.choice([3, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6]) #近づいてなんかする
+    # elif relative_x < 0:
     #     return 1  # 左移動
     # else:
     #     return 2  # 右移動
+    
+    
+    # 適切な行動をしない確率
+    random_action_prob = 0.8
+    if random.random() < random_action_prob:
+        return 0  # 何もしない
 
-    # # ジャンプの追加
-    # if not enemy_is_jumping and random.random() < 0.1:
-    #     return 3  # ジャンプ
+    # 体力が減るたびに逃げる行動の確率を増やす
+    escape_prob = (1 - (enemy_hp / CHARACTER_HP)) * 0.3  # 体力が減るほど逃げる確率が増える
+    if random.random() < escape_prob:
+        if relative_x < 0:
+            return 2  # 右移動
+        else:
+            return 1  # 左移動
+
+    # プレイヤーのHPが低い場合、手加減する確率を増やす
+    mercy_prob = (1 - (player_hp / CHARACTER_HP)) * 0.1  # プレイヤーの体力が減るほど手加減する確率が増える
+    if random.random() < mercy_prob:
+        return 0  # 何もしない
+
+    # 敵が近い場合は攻撃、遠い場合は近づく
+    if abs(relative_x) < 80:
+        return random.choice([3, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6, 4, 5, 6]) #近づいてなんかする
+    elif relative_x < 0:
+        return 1  # 左移動
+    else:
+        return 2  # 右移動

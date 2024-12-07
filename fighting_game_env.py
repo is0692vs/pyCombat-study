@@ -66,9 +66,15 @@ class FightingGameEnv:
         enemy_is_jumping = self.enemy.is_jumping
         player_is_down = self.player.is_down
         enemy_is_down = self.enemy.is_down
+
+        # 相対位置を計算
+        relative_x = player_pos[0] - enemy_pos[0]
+        relative_y = player_pos[1] - enemy_pos[1]
+
         return np.array([
-            player_pos[0], player_pos[1], enemy_pos[0], enemy_pos[1],
-            player_hp, enemy_hp, player_is_jumping, enemy_is_jumping,
+            relative_x, relative_y,  # 相対位置を追加
+            player_hp, enemy_hp,
+            player_is_jumping, enemy_is_jumping,
             player_is_down, enemy_is_down,  # ダウン状態を追加
             self.player_action, self.enemy_action
         ], dtype=np.float32)

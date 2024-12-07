@@ -172,7 +172,7 @@ class Character:
                     if enemy.down_counter >= MAX_DOWN_COUNT:
                         enemy.is_down = True
                         enemy.down_time = DOWN_LENGTH
-                        print(f'{enemy.name} is down!')
+                        # print(f'{enemy.name} is down!')
                         enemy.down_counter = 0  # ダウンカウントをリセット
 
                 if enemy.hp <= 0:
