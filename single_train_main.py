@@ -11,7 +11,10 @@ from config import BATTLES_PER_EPISODE  # 対戦回数をインポート
 import csv
 from config import *  # configの全ての設定をインポート
 import threading  # スレッドモジュールをインポート
-from handmaid_cpu_enemy import rule_based_action  # ルールベースのエージェントをインポート
+from handmaid_cpu_enemy import player_rule_based_action,enemy_rule_based_action  # ルールベースのエージェントをインポート
+
+
+
 
 # pygameの初期化
 pygame.init()
@@ -57,6 +60,12 @@ input_thread = threading.Thread(target=monitor_input)
 input_thread.daemon = True
 input_thread.start()
 
+# モデルのロード
+if PLAYER_MODEL_PATH:
+    agent.load_model(player_model_path=PLAYER_MODEL_PATH)
+    print(f"Player model loaded from {PLAYER_MODEL_PATH}")
+
+
 try:
     # 学習ループ
     for episode in range(EPISODES):
@@ -76,16 +85,22 @@ try:
             state, _ = env.reset()
             done = False
             step_count = 0
+            
             while not done and step_count < MAX_STEPS:
-                
-                # 学習するキャラクタの行動を決定
-                if np.random.rand() < agent.epsilon:
-                    player_action = env.action_space.sample()
+                # ランダムかルールベースかエージェントかで行動を決定
+                if USE_RULE_BASED:
+                    if np.random.rand() < agent.epsilon:
+                        player_action = player_rule_based_action(state)
+                    else:
+                        player_action = agent.act(state, is_player=True)  
                 else:
-                    player_action = agent.act(state, is_player=True)
-                                        
+                    if np.random.rand() < agent.epsilon:
+                        player_action = env.action_space.sample()
+                    else:
+                        player_action = agent.act(state, is_player=True)  
+                        
                 # ルールベースのキャラクタの行動を決定
-                enemy_action = rule_based_action(state)
+                enemy_action = enemy_rule_based_action(state)
 
                 action = (player_action, enemy_action)  # タプルにする
                 next_state, reward, terminated, truncated, _ = env.step(action)

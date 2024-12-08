@@ -24,12 +24,13 @@ global SAVE_MODEL_CONFIG_RESULTS
 SAVE_MODEL_CONFIG_RESULTS = False
 
 
-# モデルのパスを設定
-PLAYER_MODEL_PATH = None  # プレイヤーのモデルのパスを指定
+# モデルのパスを設定(None or 指定したパス)
+# PLAYER_MODEL_PATH = "player-agent/single_2024-12-08-16:01_Qnet.pth"  # プレイヤーのモデルのパスを指定
+PLAYER_MODEL_PATH=None
 ENEMY_MODEL_PATH = None  # 敵のモデルのパスを指定
 
 # ルールベースの行動を使用するかどうかの設定
-USE_RULE_BASED = False
+USE_RULE_BASED = True
 
 
 # 1エピソードでの対戦回数

@@ -26,7 +26,8 @@ class DQNAgent:
         self.enemy_q_network = self._build_model()
         self.player_target_network = self._build_model()
         self.enemy_target_network = self._build_model()
-        self.update_target_network()
+        self.update_target_network(is_player=True)
+        self.update_target_network(is_player=False)
         self.player_optimizer = optim.Adam(self.player_q_network.parameters(), lr=LEARNING_RATE)
         self.enemy_optimizer = optim.Adam(self.enemy_q_network.parameters(), lr=LEARNING_RATE)
         self.player_scheduler = lr_scheduler.StepLR(self.player_optimizer, step_size=LR_STEP_SIZE, gamma=LR_GAMMA)
@@ -41,6 +42,14 @@ class DQNAgent:
             nn.Linear(24, self.action_size)
         )
         return model
+    
+    def load_model(self, player_model_path=None, enemy_model_path=None):
+        if player_model_path:
+            self.player_q_network.load_state_dict(torch.load(player_model_path))
+            self.update_target_network(is_player=True)
+        if enemy_model_path:
+            self.enemy_q_network.load_state_dict(torch.load(enemy_model_path))
+            self.update_target_network(is_player=False)
 
     def act(self, state, is_player=True):
         if np.random.rand() <= self.epsilon:
@@ -93,6 +102,8 @@ class DQNAgent:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-    def update_target_network(self):
-        self.player_target_network.load_state_dict(self.player_q_network.state_dict())
-        self.enemy_target_network.load_state_dict(self.enemy_q_network.state_dict())
+    def update_target_network(self, is_player=True):
+        if is_player:
+            self.player_target_network.load_state_dict(self.player_q_network.state_dict())
+        else:
+            self.enemy_target_network.load_state_dict(self.enemy_q_network.state_dict())
