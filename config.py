@@ -24,11 +24,19 @@ global SAVE_MODEL_CONFIG_RESULTS
 SAVE_MODEL_CONFIG_RESULTS = False
 
 
+# モデルのパスを設定
+PLAYER_MODEL_PATH = None  # プレイヤーのモデルのパスを指定
+ENEMY_MODEL_PATH = None  # 敵のモデルのパスを指定
+
+# ルールベースの行動を使用するかどうかの設定
+USE_RULE_BASED = False
+
+
 # 1エピソードでの対戦回数
-BATTLES_PER_EPISODE = 5  
+BATTLES_PER_EPISODE = 30  
 
 #学習ループのエピソード数
-EPISODES = 500  
+EPISODES = 100  
 
 # 1試合の最大ステップ数
 MAX_STEPS = 2000

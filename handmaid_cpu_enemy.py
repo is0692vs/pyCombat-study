@@ -53,7 +53,7 @@ def rule_based_action(state):
         return 0  # 何もしない
 
     # 敵が近い場合は攻撃、遠い場合は近づく
-    if abs(relative_x) < 90:
+    if abs(relative_x) < 80:
         return random.choice([4,5 ]) #近づいてなんかする
     elif relative_x < 0:
         return 1  # 左移動
