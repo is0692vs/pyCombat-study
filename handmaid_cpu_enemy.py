@@ -40,7 +40,7 @@ def enemy_rule_based_action(state):
         return 0  # 何もしない
 
     # 体力が減るたびに逃げる行動の確率を増やす
-    escape_prob = (1 - (enemy_hp / CHARACTER_HP)) * 0.3  # 体力が減るほど逃げる確率が増える
+    escape_prob = (1 - (enemy_hp / CHARACTER_HP)) * 0.1  # 体力が減るほど逃げる確率が増える
     if random.random() < escape_prob:
         if relative_x < 0:
             return 2  # 右移動

@@ -2,7 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-csv_file = 'result/single_results_2024-12-08-16:01.csv'
+csv_file = 'result/single_results_2024-12-09-09:59.csv'
 y_variable = 'Total Player Reward'  # プロットしたい要素を指定
 
 # 結果をプロットする関数

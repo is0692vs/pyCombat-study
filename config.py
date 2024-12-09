@@ -30,14 +30,14 @@ PLAYER_MODEL_PATH=None
 ENEMY_MODEL_PATH = None  # 敵のモデルのパスを指定
 
 # ルールベースの行動を使用するかどうかの設定
-USE_RULE_BASED = True
+USE_RULE_BASED = False
 
 
 # 1エピソードでの対戦回数
 BATTLES_PER_EPISODE = 30  
 
 #学習ループのエピソード数
-EPISODES = 100  
+EPISODES = 300  
 
 # 1試合の最大ステップ数
 MAX_STEPS = 2000
