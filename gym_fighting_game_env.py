@@ -7,7 +7,7 @@ import pygame
 from fighting_game_env import FightingGameEnv
 from game import Character, GROUND_Y
 from config import CAN_JUMP, WINDOW_WIDTH  # 
-from config import HP_DIFFERENCES_REWARD_RATE #FTGICEの論文で出てたフレームステップごとの体力変化を報酬にするやつの倍率
+from config import FRAME_HP_DIFFERENCES_REWARD_RATE #FTGICEの論文で出てたフレームステップごとの体力変化を報酬にするやつの倍率
 
 class GymFightingGameEnv(gym.Env):
     def __init__(self, single_train=False):
@@ -40,9 +40,9 @@ class GymFightingGameEnv(gym.Env):
         enemy_hp_change = self.prev_enemy_hp - current_enemy_hp
 
         # 体力変化量に基づく報酬を追加
-        player_reward += (enemy_hp_change - player_hp_change) * HP_DIFFERENCES_REWARD_RATE
+        player_reward += (enemy_hp_change - player_hp_change) * FRAME_HP_DIFFERENCES_REWARD_RATE
         if not self.env.single_train:
-            enemy_reward += (player_hp_change - enemy_hp_change) * HP_DIFFERENCES_REWARD_RATE
+            enemy_reward += (player_hp_change - enemy_hp_change) * FRAME_HP_DIFFERENCES_REWARD_RATE
 
         # if self.env.single_train:
         #     enemy_reward = 0  # single_trainの場合、エネミーの報酬を0にする

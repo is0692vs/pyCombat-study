@@ -10,7 +10,7 @@ from config import (
     EDGE_PENALTY, NO_PENALTY_AREA_WIDTH,  # ペナルティの設定をインポート
     WINDOW_WIDTH, WINDOW_HEIGHT,  # ウィンドウの大きさの設定をインポート
     MAX_STEPS, # 最大ステップ数をインポート
-    HEALTH_DIFFERENCE_REWARD_RATE, # 体力差に基づく報酬の倍率をインポート
+    ROUND_HP_DIFFERENCE_REWARD_RATE, # 体力差に基づく報酬の倍率をインポート
     BATTLES_PER_EPISODE,  # 1エピソードでの対戦回数をインポート
     CHARACTER_WIDTH, CHARACTER_HEIGHT, # キャラクタの幅、高さをインポート
     CHARACTER_DISTANCE,  # 初期距離をインポート
@@ -161,17 +161,17 @@ class FightingGameEnv:
         self.enemy.update()
 
 
-        # テスト用報酬(相対位置)
-        relative_x = abs(self.player.position.x - self.enemy.position.x)
-        # print(relative_x)
-        if 0 <= relative_x <= 10:
-            player_reward += TEST_REWARD
-            # print("TEST_REWARD added!")
+        # # テスト用報酬(相対位置)
+        # relative_x = abs(self.player.position.x - self.enemy.position.x)
+        # # print(relative_x)
+        # if 0 <= relative_x <= 10:
+        #     player_reward += TEST_REWARD
+        #     # print("TEST_REWARD added!")
 
             
         done = self.player.hp <= 0 or self.enemy.hp <= 0
         if done or self.step_count >= MAX_STEPS:
-            health_difference_reward = (self.player.hp - self.enemy.hp) * HEALTH_DIFFERENCE_REWARD_RATE
+            health_difference_reward = (self.player.hp - self.enemy.hp) * ROUND_HP_DIFFERENCE_REWARD_RATE
             player_reward += health_difference_reward
             if not self.single_train:
                 enemy_reward -= health_difference_reward

@@ -33,6 +33,7 @@ time.sleep(1)
 # 環境の初期化
 env = gym.make('FightingGame-v0', single_train=True)  # single_trainフラグをTrueに設定
 
+
 # state_sizeとaction_sizeを取得
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
