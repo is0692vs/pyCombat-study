@@ -11,7 +11,8 @@ def enemy_rule_based_action(state):
     relative_x, relative_y, player_hp, enemy_hp, player_is_jumping, enemy_is_jumping, player_is_down, enemy_is_down, player_action, enemy_action = state
 
     # 敵が近い場合はパンチ、遠い場合は近づく(最適化されてて強すぎ)
-    if abs(relative_x) <80:
+    #攻略法:寄らせてから飛び越えて逆方向に向いてるうちに後ろから攻撃(近づいたら方向転換の移動をしない)
+    if abs(relative_x) <60:
         return random.choice([4,4,5,5,6])  # 攻撃
     elif relative_x < 0:
         return 1  # 左移動
