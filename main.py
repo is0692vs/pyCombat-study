@@ -82,6 +82,10 @@ try:
         total_player_reward = INITIAL_PLAYER_REWARD
         total_enemy_reward = INITIAL_ENEMY_REWARD
         total_steps = 0  # 合計ステップ数を初期化
+        # エピソードの開始時にカウンターを初期化
+        player_wins = 0
+        enemy_wins = 0
+        timeouts = 0
 
         # 報酬をリセット
         env.unwrapped.env.player.reward = INITIAL_PLAYER_REWARD
@@ -97,7 +101,7 @@ try:
             
             while not done and step_count < MAX_STEPS:
                 while IS_PAUSED:
-                    time.sleep(1.0)  # CPU使用率を下げるために短い待機を入れる
+                    time.sleep(5.0)  # CPU使用率を下げるために短い待機を入れる
         
                 # ランダムかルールベースかエージェントかで行動を決定
                 if USE_RULE_BASED:
@@ -142,15 +146,37 @@ try:
                 if reward != 0:
                     # print(f"Episode {episode+1}, Step: {step_count}, Action: {action}, Reward: {reward}, Total Player Reward: {total_player_reward}, Total Enemy Reward: {total_enemy_reward}")
                     pass
+                # バトル終了時に勝敗をカウント
+            if step_count >= MAX_STEPS:
+                timeouts += 1
+            elif env.unwrapped.env.enemy.hp <= 0:
+                player_wins += 1
+            elif env.unwrapped.env.player.hp <= 0:
+                enemy_wins += 1
         # 探索率を減少させる
         agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
 
         # エピソードの終了時間を計算して表示
         elapsed_time = time.time() - start_time
-        print(f"Episode {episode+1}/{EPISODES}: Total Player Reward: {total_player_reward:.2f}, Total Enemy Reward: {total_enemy_reward:.2f}, Elapsed Time: {elapsed_time:.2f} sec, Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
-
-        # エピソードごとの結果をリストに追加
-        episode_results.append([episode+1, total_player_reward, total_enemy_reward, elapsed_time, total_steps])
+        print(f"Episode {episode+1}/{EPISODES}: "
+            f"Player Wins: {player_wins}/{BATTLES_PER_EPISODE}, "
+            f"Enemy Wins: {enemy_wins}/{BATTLES_PER_EPISODE}, "
+            f"Timeouts: {timeouts}/{BATTLES_PER_EPISODE}, "
+            f"Total Player Reward: {total_player_reward:.2f}, "
+            f"Total Enemy Reward: {total_enemy_reward:.2f}, "
+            f"Elapsed Time: {elapsed_time:.2f} sec, "
+            f"Steps: {total_steps/1000:.1f}/{MAX_STEPS*BATTLES_PER_EPISODE/1000}K steps")
+        # エピソードごとの結果を保存
+        episode_results.append([
+            episode+1, 
+            total_player_reward, 
+            total_enemy_reward, 
+            elapsed_time, 
+            total_steps,
+            player_wins,
+            enemy_wins,
+            timeouts
+        ])
 
 except KeyboardInterrupt:
     print(f"学習をエピソード {episode+1} で中断しました。")
@@ -180,7 +206,16 @@ finally:
         results_path = os.path.join('result', f'results_{timestamp}.csv')
         with open(results_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['Episode', 'Total Player Reward', 'Total Enemy Reward', 'Elapsed Time', 'Total Steps'])
+            writer.writerow([
+                'Episode', 
+                'Total Player Reward', 
+                'Total Enemy Reward', 
+                'Elapsed Time', 
+                'Total Steps',
+                'Player Wins',
+                'Enemy Wins',
+                'Timeouts'
+            ])
             writer.writerows(episode_results)
             
     env.close()
