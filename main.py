@@ -15,6 +15,8 @@ import argparse
 from handmaid_cpu_enemy import player_rule_based_action,enemy_rule_based_action  # ルールベースのエージェントをインポート
 
 
+global IS_PAUSED
+IS_PAUSED = False
 
 
 # pygameの初期化
@@ -46,7 +48,7 @@ episode_results = []
 
 # ターミナルからの入力を監視する関数
 def monitor_input():
-    global RENDER, SAVE_MODEL_CONFIG_RESULTS
+    global RENDER, SAVE_MODEL_CONFIG_RESULTS, IS_PAUSED
     while True:
         user_input = input()
         if user_input == 'r':
@@ -55,6 +57,12 @@ def monitor_input():
         elif user_input == 's':
             SAVE_MODEL_CONFIG_RESULTS = not SAVE_MODEL_CONFIG_RESULTS
             print(f"SAVE_MODEL_CONFIG_RESULTS is now set to {SAVE_MODEL_CONFIG_RESULTS}")
+        elif user_input == 'p':
+            IS_PAUSED = True
+            print("Learning paused. Press Enter to continue...")
+            input()
+            IS_PAUSED = False
+            print("Learning resumed.")
 
 # 入力監視スレッドを開始
 input_thread = threading.Thread(target=monitor_input)
@@ -88,6 +96,9 @@ try:
             step_count = 0
             
             while not done and step_count < MAX_STEPS:
+                while IS_PAUSED:
+                    time.sleep(1.0)  # CPU使用率を下げるために短い待機を入れる
+        
                 # ランダムかルールベースかエージェントかで行動を決定
                 if USE_RULE_BASED:
                     if np.random.rand() < agent.epsilon:
